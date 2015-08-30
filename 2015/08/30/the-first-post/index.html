@@ -15,7 +15,7 @@ GitHub用GitHub很久了，找些开源库，写些小项目什么的，工作�
 <meta property="og:description" content="title: GitHub Blog启程了好久没有写博客了，原因是自己太懒，没有总结落实成文字的习惯。以前一直用的csdn，写过一些文章，也转过一些文章，后来由于懒，就没再更新。现在决定要开始写些东西了，就索性转到github上来好了，也学一些Markdown！
 下面记一下博客搭建过程：
 GitHub用GitHub很久了，找些开源库，写些小项目什么的，工作中也一直用git来做版本管理，因此这些先略">
-<meta property="og:updated_time" content="2015-08-30T05:46:32.000Z">
+<meta property="og:updated_time" content="2015-08-30T09:57:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitHub上的第一篇博客">
 <meta name="twitter:description" content="title: GitHub Blog启程了好久没有写博客了，原因是自己太懒，没有总结落实成文字的习惯。以前一直用的csdn，写过一些文章，也转过一些文章，后来由于懒，就没再更新。现在决定要开始写些东西了，就索性转到github上来好了，也学一些Markdown！
@@ -102,12 +102,13 @@ GitHub用GitHub很久了，找些开源库，写些小项目什么的，工作�
 <h4 id="本地调试">本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
 <h4 id="Hexo简写命令">Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
 <h3 id="在GitHub创建一个项目xxx-github-io">在GitHub创建一个项目xxx.github.io</h3><p>用git clone 到本地</p>
-<h3 id="部署静态网页">部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure></p>
-<h3 id="同步发布到github">同步发布到github</h3>
+<h3 id="部署静态网页">部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
+<p>会在当前目录下生成一个.deploy_git的目录，cd到它下面，把它同步到github，大功告成</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cidy2rj640000jioiyvrwtseh" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cidybqo3100002doinb82nwif" class="article-share-link">Share</a>
       
       
     </footer>
