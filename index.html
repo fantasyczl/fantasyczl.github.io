@@ -65,6 +65,44 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-hexo-node" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/06/19/hexo-node/" class="article-date">
+  <time datetime="2016-06-19T02:35:21.000Z" itemprop="datePublished">2016-06-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/06/19/hexo-node/">Hexo与node 6.2.2不兼容解决方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm rebuild hexo</span><br><span class="line">rm -fr node_modules/</span><br><span class="line">npm -i --no-optional</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="ciplzfc0f0000uf4illov38nd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-vim-paste" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/06/14/vim-paste/" class="article-date">
@@ -79,7 +117,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/14/vim-paste/">vim-paste</a>
+      <a class="article-title" href="/2016/06/14/vim-paste/">Vim粘贴代码格式乱的问题</a>
     </h1>
   
 
@@ -87,7 +125,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="title-Vim粘贴代码格式乱的问题"><a href="#title-Vim粘贴代码格式乱的问题" class="headerlink" title="title: Vim粘贴代码格式乱的问题"></a>title: Vim粘贴代码格式乱的问题</h2><p>从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。<br>后来才发现，vim里有一个这样的命令来解决这个问题。</p>
+        <p>从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。<br>后来才发现，vim里有一个这样的命令来解决这个问题。</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> paste</span><br></pre></td></tr></table></figure>
 <p>进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> nopaste</span><br></pre></td></tr></table></figure>
@@ -96,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="ciplyvjgp0001k04iovslzgb9" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="ciplzfc0o0002uf4idl4eooou" class="article-share-link">Share</a>
       
       
     </footer>
@@ -120,7 +158,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/08/30/the-first-post/">GitHub上的第一篇博客</a>
+      <a class="article-title" href="/2015/08/30/the-first-post/">GitHub Blog启程了</a>
     </h1>
   
 
@@ -128,7 +166,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="title-GitHub-Blog启程了"><a href="#title-GitHub-Blog启程了" class="headerlink" title="title: GitHub Blog启程了"></a>title: GitHub Blog启程了</h2><p>好久没有写博客了，原因是自己太懒，没有总结落实成文字的习惯。以前一直用的csdn，写过一些文章，也转过一些文章，后来由于懒，就没再更新。现在决定要开始写些东西了，就索性转到github上来好了，也学一些Markdown！</p>
+        <p>好久没有写博客了，原因是自己太懒，没有总结落实成文字的习惯。以前一直用的csdn，写过一些文章，也转过一些文章，后来由于懒，就没再更新。现在决定要开始写些东西了，就索性转到github上来好了，也学一些Markdown！</p>
 <p>下面记一下博客搭建过程：</p>
 <h3 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h3><p>用GitHub很久了，找些开源库，写些小项目什么的，工作中也一直用git来做版本管理，因此这些先略过不表</p>
 <h3 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h3><p>Hexo是一个快速、简洁且高效的博客框架。支持Markdown解析文章，因此就选了Hexo</p>
@@ -144,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="ciplyvjgj0000k04i32zyrn3v" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="ciplzfc0l0001uf4ipaa6mz1x" class="article-share-link">Share</a>
       
       
     </footer>
@@ -169,7 +207,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -181,11 +219,15 @@
       <ul>
         
           <li>
-            <a href="/2016/06/14/vim-paste/">vim-paste</a>
+            <a href="/2016/06/19/hexo-node/">Hexo与node 6.2.2不兼容解决方法</a>
           </li>
         
           <li>
-            <a href="/2015/08/30/the-first-post/">GitHub上的第一篇博客</a>
+            <a href="/2016/06/14/vim-paste/">Vim粘贴代码格式乱的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/30/the-first-post/">GitHub Blog启程了</a>
           </li>
         
       </ul>
