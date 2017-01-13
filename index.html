@@ -5,15 +5,12 @@
   
   <title>fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
+  <meta property="og:type" content="website">
 <meta property="og:title" content="fantasyczl">
 <meta property="og:url" content="http://fantasyczl.com/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="fantasyczl">
-<meta name="twitter:description">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -65,6 +62,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-authorization-and-bindings-in-laravel5-3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/" class="article-date">
+  <time datetime="2017-01-13T13:27:02.000Z" itemprop="datePublished">2017-01-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/13/authorization-and-bindings-in-laravel5-3/">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用.</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> ($user-&gt;can(<span class="string">'view'</span>, $post)) &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.<br>但是我按官方文档上的说明进行调用，参数总不能正确解析：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'can:view,post'</span>);</div></pre></td></tr></table></figure>
+<p>通过这样调用，Controller 中接到的参数仍然是 post id, 是个数字。</p>
+<p>放狗搜了一下才知道，原来是需要先使用 Middleware bings 来对参数进行绑定。代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'bindings'</span>, <span class="string">'can:view,post'</span>);</div></pre></td></tr></table></figure>
+<p>一试果然管用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cixvubcna0000gm4i54x4vn4i" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel-PHP/">Laravel, PHP</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-vim-change-background-by-time" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/06/19/vim-change-background-by-time/" class="article-date">
@@ -88,15 +131,15 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。<br>打开.vimrc。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></span><br><span class="line">    <span class="keyword">set</span> background=dark</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">set</span> background=light</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></div><div class="line">    <span class="keyword">set</span> background=dark</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">set</span> background=light</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
 <p>这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没有关，背景也不会有变化。所以下一步我们就是要解决这个问题。<br>每次用vim写代码，:w用的很多。所以我们在每次保存文件的时候，执行一次~/.vimrc文件。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</div><div class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
 <p>至此，已经完成。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cipm0eoxr0002in4ihrgyio5f" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cixvubcnj0003gm4iibchvomv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -131,12 +174,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>解决方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm rebuild hexo</span><br><span class="line">rm -fr node_modules/</span><br><span class="line">npm -i --no-optional</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm rebuild hexo</div><div class="line">rm -fr node_modules/</div><div class="line">npm -i --no-optional</div></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cipm0eoxj0000in4icvwtwskv" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cixvubcne0001gm4iqo0k44bx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -169,15 +212,15 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。<br>后来才发现，vim里有一个这样的命令来解决这个问题。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> paste</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> paste</div></pre></td></tr></table></figure>
 <p>进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> nopaste</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> nopaste</div></pre></td></tr></table></figure>
 <p>回到正常模式。<br>粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cipm0eoxt0003in4iubfbpxmv" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cixvubcnq0006gm4ixyotik22" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -216,18 +259,18 @@
 <h3 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h3><p>用GitHub很久了，找些开源库，写些小项目什么的，工作中也一直用git来做版本管理，因此这些先略过不表</p>
 <h3 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h3><p>Hexo是一个快速、简洁且高效的博客框架。支持Markdown解析文章，因此就选了Hexo</p>
 <h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>这之前需要先安装Node.js</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">npm install hexo --save</span><br></pre></td></tr></table></figure>
-<h4 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h4><p>安装好后，进入博客根目录，执行以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
-<h4 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试"></a>本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
-<h4 id="Hexo简写命令"><a href="#Hexo简写命令" class="headerlink" title="Hexo简写命令"></a>Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
-<h4 id="本地设置"><a href="#本地设置" class="headerlink" title="本地设置"></a>本地设置</h4><p>打开_config.yml，设置发布方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    <span class="built_in">type</span>: git</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm install -g hexo-cli</div><div class="line">npm install hexo --save</div></pre></td></tr></table></figure>
+<h4 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h4><p>安装好后，进入博客根目录，执行以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init</div></pre></td></tr></table></figure></p>
+<h4 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试"></a>本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo server</div></pre></td></tr></table></figure></p>
+<h4 id="Hexo简写命令"><a href="#Hexo简写命令" class="headerlink" title="Hexo简写命令"></a>Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">hexo n <span class="comment">#new</span></div><div class="line">hexo g <span class="comment">#generate</span></div><div class="line">hexo s <span class="comment">#server</span></div></pre></td></tr></table></figure>
+<h4 id="本地设置"><a href="#本地设置" class="headerlink" title="本地设置"></a>本地设置</h4><p>打开_config.yml，设置发布方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">    <span class="built_in">type</span>: git</div></pre></td></tr></table></figure></p>
 <h3 id="在GitHub创建一个项目xxx-github-io"><a href="#在GitHub创建一个项目xxx-github-io" class="headerlink" title="在GitHub创建一个项目xxx.github.io"></a>在GitHub创建一个项目xxx.github.io</h3><p>用git clone 到本地</p>
-<h3 id="部署静态网页"><a href="#部署静态网页" class="headerlink" title="部署静态网页"></a>部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
+<h3 id="部署静态网页"><a href="#部署静态网页" class="headerlink" title="部署静态网页"></a>部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo g</div><div class="line">hexo d</div></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cipm0eoxp0001in4igx3hvab8" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cixvubcnp0004gm4in5168o7t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -248,7 +291,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel-PHP/">Laravel, PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -257,7 +300,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/vim/" style="font-size: 10px;">vim</a>
+      <a href="/tags/Laravel-PHP/" style="font-size: 10px;">Laravel, PHP</a> <a href="/tags/vim/" style="font-size: 20px;">vim</a>
     </div>
   </div>
 
@@ -266,7 +309,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -276,6 +319,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</a>
+          </li>
         
           <li>
             <a href="/2016/06/19/vim-change-background-by-time/">VIM白天用Dark背景，晚上用Light背景</a>
@@ -305,7 +352,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2016 fantasyczl<br>
+      &copy; 2017 fantasyczl<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
