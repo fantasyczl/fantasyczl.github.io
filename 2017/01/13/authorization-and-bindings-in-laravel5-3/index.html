@@ -5,22 +5,18 @@
   
   <title>Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用.
-123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125;
-这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
+  <meta name="description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用. 123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125; 这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
+<meta name="keywords" content="Laravel,PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析">
 <meta property="og:url" content="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用.
-123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125;
-这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
+<meta property="og:description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用. 123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125; 这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-01-13T13:45:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析">
-<meta name="twitter:description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用.
-123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125;
-这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
+<meta name="twitter:description" content="Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用. 123if ($user-&amp;gt;can(&apos;view&apos;, $post)) &amp;#123;&amp;#125; 这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.但是我按官方文档上的说明进行调用，参">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -64,7 +60,7 @@
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://fantasyczl.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://fantasyczl.com"></form>
       </div>
     </div>
   </div>
@@ -104,7 +100,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cixvuwwnl0000a14iq1aj0opa" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cj7of0ba80001e54iqnuo7ake" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
@@ -114,6 +110,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2017/09/17/Python-raw-string-end-with-backlash/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Python raw 字符串不能以反斜线结尾
+        
+      </div>
+    </a>
   
   
     <a href="/2016/06/19/vim-change-background-by-time/" id="article-nav-older" class="article-nav-link-wrap">
@@ -136,7 +141,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vim/">Vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vim/">Vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -145,7 +150,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Vim/" style="font-size: 20px;">Vim</a>
+      <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Vim/" style="font-size: 20px;">Vim</a>
     </div>
   </div>
 
@@ -154,7 +159,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -164,6 +169,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/09/17/Python-raw-string-end-with-backlash/">Python raw 字符串不能以反斜线结尾</a>
+          </li>
         
           <li>
             <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</a>
@@ -179,10 +188,6 @@
         
           <li>
             <a href="/2016/06/14/vim-paste/">Vim粘贴代码格式乱的问题</a>
-          </li>
-        
-          <li>
-            <a href="/2015/08/30/the-first-post/">GitHub Blog启程了</a>
           </li>
         
       </ul>

@@ -9,6 +9,7 @@
 <meta property="og:title" content="fantasyczl">
 <meta property="og:url" content="http://fantasyczl.com/index.html">
 <meta property="og:site_name" content="fantasyczl">
+<meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="fantasyczl">
   
@@ -54,13 +55,58 @@
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://fantasyczl.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://fantasyczl.com"></form>
       </div>
     </div>
   </div>
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-Python-raw-string-end-with-backlash" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/17/Python-raw-string-end-with-backlash/" class="article-date">
+  <time datetime="2017-09-17T07:22:33.000Z" itemprop="datePublished">2017-09-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/17/Python-raw-string-end-with-backlash/">Python raw 字符串不能以反斜线结尾</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Python raw 字符串可以禁止字符串中的反斜线后的字符转义。</p>
+<p>尽管 raw 字符串很有用, 但是一个raw 字符串也不能以单个的反斜线结尾, 因为, 反斜线会转义后续引用的字符, 仍然必须转义外围引号字符以将其嵌入到该字符串中. 也就是说, r”..\” 不是一个有效的字符中常量, 一个raw字符串不能以奇数个反斜线结束. </p>
+<p>如果需要用单个的反斜线结束一个raw 字符串, 有几种方法：</p>
+<p>可以使用两个反斜线并分片掉第二个反斜线( r’1\nb\tc\’[:-1])</p>
+<p>或手动添加一个反斜线(r’1\nb\tc’ + ‘\’) </p>
+<p>或忽略raw字符串语法并在常规字符口中中把反斜线改为又反斜线( r’1\nb\tc\’)</p>
+<p>以上三种形式都会创建同样的字符串. 字符串的最后包含一个反斜线</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cj7of0ba20000e54irpxvsjhi" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-authorization-and-bindings-in-laravel5-3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -96,7 +142,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cixvuwwnl0000a14iq1aj0opa" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cj7of0ba80001e54iqnuo7ake" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
@@ -139,7 +185,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cixvuwwnv0004a14itojokeyi" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cj7of0bap0008e54i6o1hrant" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vim/">Vim</a></li></ul>
@@ -179,7 +225,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cixvuwwnp0001a14i4md43zrh" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cj7of0bac0002e54ig46mjau0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -220,7 +266,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cixvuwwnw0006a14ifhjhcoa2" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cj7of0baq0009e54ia3uehi51" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vim/">Vim</a></li></ul>
@@ -270,7 +316,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cixvuwwnu0003a14ipydkxyjp" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cj7of0baf0004e54iuil9yhul" class="article-share-link">Share</a>
       
       
     </footer>
@@ -291,7 +337,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vim/">Vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vim/">Vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -300,7 +346,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Vim/" style="font-size: 20px;">Vim</a>
+      <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Vim/" style="font-size: 20px;">Vim</a>
     </div>
   </div>
 
@@ -309,7 +355,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -319,6 +365,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/09/17/Python-raw-string-end-with-backlash/">Python raw 字符串不能以反斜线结尾</a>
+          </li>
         
           <li>
             <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</a>
@@ -334,10 +384,6 @@
         
           <li>
             <a href="/2016/06/14/vim-paste/">Vim粘贴代码格式乱的问题</a>
-          </li>
-        
-          <li>
-            <a href="/2015/08/30/the-first-post/">GitHub Blog启程了</a>
           </li>
         
       </ul>

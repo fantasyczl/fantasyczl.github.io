@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: Vim | fantasyczl</title>
+  <title>Python raw 字符串不能以反斜线结尾 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="fantasyczl">
-<meta property="og:url" content="http://fantasyczl.com/tags/Vim/index.html">
+  <meta name="description" content="Python raw 字符串可以禁止字符串中的反斜线后的字符转义。 尽管 raw 字符串很有用, 但是一个raw 字符串也不能以单个的反斜线结尾, 因为, 反斜线会转义后续引用的字符, 仍然必须转义外围引号字符以将其嵌入到该字符串中. 也就是说, r”..\” 不是一个有效的字符中常量, 一个raw字符串不能以奇数个反斜线结束.  如果需要用单个的反斜线结束一个raw 字符串, 有几种方法： 可以">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python raw 字符串不能以反斜线结尾">
+<meta property="og:url" content="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/index.html">
 <meta property="og:site_name" content="fantasyczl">
+<meta property="og:description" content="Python raw 字符串可以禁止字符串中的反斜线后的字符转义。 尽管 raw 字符串很有用, 但是一个raw 字符串也不能以单个的反斜线结尾, 因为, 反斜线会转义后续引用的字符, 仍然必须转义外围引号字符以将其嵌入到该字符串中. 也就是说, r”..\” 不是一个有效的字符中常量, 一个raw字符串不能以奇数个反斜线结束.  如果需要用单个的反斜线结束一个raw 字符串, 有几种方法： 可以">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-17T13:43:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fantasyczl">
+<meta name="twitter:title" content="Python raw 字符串不能以反斜线结尾">
+<meta name="twitter:description" content="Python raw 字符串可以禁止字符串中的反斜线后的字符转义。 尽管 raw 字符串很有用, 但是一个raw 字符串也不能以单个的反斜线结尾, 因为, 反斜线会转义后续引用的字符, 仍然必须转义外围引号字符以将其嵌入到该字符串中. 也就是说, r”..\” 不是一个有效的字符中常量, 一个raw字符串不能以奇数个反斜线结束.  如果需要用单个的反斜线结束一个raw 字符串, 有几种方法： 可以">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -61,58 +66,61 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/06/19/vim-change-background-by-time/" class="archive-article-date">
-  <time datetime="2016-06-19T02:56:49.000Z" itemprop="datePublished">6月 19</time>
+        <section id="main"><article id="post-Python-raw-string-end-with-backlash" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/17/Python-raw-string-end-with-backlash/" class="article-date">
+  <time datetime="2017-09-17T07:22:33.000Z" itemprop="datePublished">2017-09-17</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/06/19/vim-change-background-by-time/">VIM白天用Dark背景，晚上用Light背景</a>
+    <h1 class="article-title" itemprop="name">
+      Python raw 字符串不能以反斜线结尾
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/06/14/vim-paste/" class="archive-article-date">
-  <time datetime="2016-06-14T05:54:28.000Z" itemprop="datePublished">6月 14</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/06/14/vim-paste/">Vim粘贴代码格式乱的问题</a>
-    </h1>
-  
+        <p>Python raw 字符串可以禁止字符串中的反斜线后的字符转义。</p>
+<p>尽管 raw 字符串很有用, 但是一个raw 字符串也不能以单个的反斜线结尾, 因为, 反斜线会转义后续引用的字符, 仍然必须转义外围引号字符以将其嵌入到该字符串中. 也就是说, r”..\” 不是一个有效的字符中常量, 一个raw字符串不能以奇数个反斜线结束. </p>
+<p>如果需要用单个的反斜线结束一个raw 字符串, 有几种方法：</p>
+<p>可以使用两个反斜线并分片掉第二个反斜线( r’1\nb\tc\’[:-1])</p>
+<p>或手动添加一个反斜线(r’1\nb\tc’ + ‘\’) </p>
+<p>或忽略raw字符串语法并在常规字符口中中把反斜线改为又反斜线( r’1\nb\tc\’)</p>
+<p>以上三种形式都会创建同样的字符串. 字符串的最后包含一个反斜线</p>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cj7of0ba20000e54irpxvsjhi" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
 </section>
         
           <aside id="sidebar">
