@@ -63,6 +63,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ssh-sharing-sessions" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/18/ssh-sharing-sessions/" class="article-date">
+  <time datetime="2018-03-18T15:09:47.000Z" itemprop="datePublished">2018-03-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/18/ssh-sharing-sessions/">Mac 下 SSH Clone Session</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。</p>
+<p>但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。</p>
+<p>发现其实是 ssh config 的一个功能。所以实现过程如果下：</p>
+<p>先切到 .ssh 目录。在主目录下，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> .ssh</div></pre></td></tr></table></figure>
+<p>然后新建一个 config 文件，并且内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi config</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">host *</div><div class="line">ControlMaster auto</div><div class="line">ControlPath ~/.ssh/master-%r@%h:%p</div></pre></td></tr></table></figure>
+<p>然后你在一个终端下用 ssh 登陆服务器，是需要输入密码的，再新建一个终端tab, 再 ssh 到同一个服务，这次就不用输入密码了，自动登陆。<br>到此，克隆会话完成。</p>
+<p>Config 内容解释：</p>
+<ul>
+<li><p>host : ssh 的 confg 是按 host 来匹配的。这里星号表示下面的配置适用于所有的主机。</p>
+</li>
+<li><p>ControlMaster : 开启同一个网络连接的 session 共享。这里可以有多个值，auto 表示后面新建的 ssh 连接的时候，如果存在 master 连接，就复用，如果不存在，就新建一个。新建的话是需要输入密码的。</p>
+</li>
+<li><p>ControlPath : ssh 用 ControlPath 参数来表示一个连接。%r 表示 ssh 登陆名。%h 表示登陆主机名。%p 表示 ssh 远程登陆端口。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="cjewxtyrg0006vi4ig1pvg2nw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-do-not-show-chinese-files" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/12/05/git-do-not-show-chinese-files/" class="article-date">
@@ -97,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="cjatnyz8a0004e54izqqcfcty" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="cjewxtyre0003vi4ipviq2fat" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
@@ -142,7 +196,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cjatnyz850001e54ism1hsjp5" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cjewxtyr20000vi4ioaddb3y8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
@@ -188,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cjatnyz810000e54izd4g6xsm" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cjewxtyra0001vi4i2boqfw68" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
@@ -231,7 +285,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjatnyz8b0006e54iu17fyz4r" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjewxtyrj0009vi4ix309ni3a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -271,7 +325,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cjatnyz880003e54if5kvdueo" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cjewxtyrf0004vi4ike3sxml4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -312,7 +366,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cjatnyz8f0008e54ixxmkdlbl" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cjewxtyrl000bvi4iaawsgm5n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -362,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cjatnyz8e0007e54ik8k457rk" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cjewxtyri0008vi4igqqwgnzf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -401,7 +455,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -411,6 +465,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/03/18/ssh-sharing-sessions/">Mac 下 SSH Clone Session</a>
+          </li>
         
           <li>
             <a href="/2017/12/05/git-do-not-show-chinese-files/">Git 不能正常显示中文文件名的问题解决方法</a>
@@ -428,10 +486,6 @@
             <a href="/2016/06/19/vim-change-background-by-time/">VIM白天用Dark背景，晚上用Light背景</a>
           </li>
         
-          <li>
-            <a href="/2016/06/19/hexo-node/">Hexo与node 6.2.2不兼容解决方法</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -444,7 +498,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2017 fantasyczl<br>
+      &copy; 2018 fantasyczl<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

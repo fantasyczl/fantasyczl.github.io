@@ -3,20 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>VIM白天用Dark背景，晚上用Light背景 | fantasyczl</title>
+  <title>Archives: 2018/3 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
-<meta name="keywords" content="vim">
-<meta property="og:type" content="article">
-<meta property="og:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta property="og:url" content="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="fantasyczl">
+<meta property="og:url" content="http://fantasyczl.com/archives/2018/03/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-17T13:54:01.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta name="twitter:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
+<meta name="twitter:title" content="fantasyczl">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -66,68 +61,39 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-vim-change-background-by-time" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/06/19/vim-change-background-by-time/" class="article-date">
-  <time datetime="2016-06-19T02:56:49.000Z" itemprop="datePublished">2016-06-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      VIM白天用Dark背景，晚上用Light背景
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2018/03/18/ssh-sharing-sessions/" class="archive-article-date">
+  <time datetime="2018-03-18T15:09:47.000Z" itemprop="datePublished">3月 18</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/03/18/ssh-sharing-sessions/">Mac 下 SSH Clone Session</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。<br>打开.vimrc。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></div><div class="line">    <span class="keyword">set</span> background=dark</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">set</span> background=light</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
-<p>这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没有关，背景也不会有变化。所以下一步我们就是要解决这个问题。<br>每次用vim写代码，:w用的很多。所以我们在每次保存文件的时候，执行一次~/.vimrc文件。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</div><div class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
-<p>至此，已经完成。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjewxtyrj0009vi4ix309ni3a" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/06/19/hexo-node/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Hexo与node 6.2.2不兼容解决方法</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
+  
+  
+    </div></section>
+  
 </section>
         
           <aside id="sidebar">

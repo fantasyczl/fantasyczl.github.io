@@ -3,20 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>VIM白天用Dark背景，晚上用Light背景 | fantasyczl</title>
+  <title>Mac 下 SSH Clone Session | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
-<meta name="keywords" content="vim">
+  <meta name="description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta property="og:url" content="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/index.html">
+<meta property="og:title" content="Mac 下 SSH Clone Session">
+<meta property="og:url" content="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
+<meta property="og:description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-17T13:54:01.000Z">
+<meta property="og:updated_time" content="2018-03-18T15:30:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta name="twitter:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
+<meta name="twitter:title" content="Mac 下 SSH Clone Session">
+<meta name="twitter:description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -66,10 +65,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-vim-change-background-by-time" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-ssh-sharing-sessions" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/06/19/vim-change-background-by-time/" class="article-date">
-  <time datetime="2016-06-19T02:56:49.000Z" itemprop="datePublished">2016-06-19</time>
+    <a href="/2018/03/18/ssh-sharing-sessions/" class="article-date">
+  <time datetime="2018-03-18T15:09:47.000Z" itemprop="datePublished">2018-03-18</time>
 </a>
     
   </div>
@@ -80,7 +79,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      VIM白天用Dark背景，晚上用Light背景
+      Mac 下 SSH Clone Session
     </h1>
   
 
@@ -88,39 +87,41 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。<br>打开.vimrc。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></div><div class="line">    <span class="keyword">set</span> background=dark</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">set</span> background=light</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
-<p>这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没有关，背景也不会有变化。所以下一步我们就是要解决这个问题。<br>每次用vim写代码，:w用的很多。所以我们在每次保存文件的时候，执行一次~/.vimrc文件。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</div><div class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
-<p>至此，已经完成。</p>
+        <p>因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。</p>
+<p>但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。</p>
+<p>发现其实是 ssh config 的一个功能。所以实现过程如果下：</p>
+<p>先切到 .ssh 目录。在主目录下，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> .ssh</div></pre></td></tr></table></figure>
+<p>然后新建一个 config 文件，并且内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi config</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">host *</div><div class="line">ControlMaster auto</div><div class="line">ControlPath ~/.ssh/master-%r@%h:%p</div></pre></td></tr></table></figure>
+<p>然后你在一个终端下用 ssh 登陆服务器，是需要输入密码的，再新建一个终端tab, 再 ssh 到同一个服务，这次就不用输入密码了，自动登陆。<br>到此，克隆会话完成。</p>
+<p>Config 内容解释：</p>
+<ul>
+<li><p>host : ssh 的 confg 是按 host 来匹配的。这里星号表示下面的配置适用于所有的主机。</p>
+</li>
+<li><p>ControlMaster : 开启同一个网络连接的 session 共享。这里可以有多个值，auto 表示后面新建的 ssh 连接的时候，如果存在 master 连接，就复用，如果不存在，就新建一个。新建的话是需要输入密码的。</p>
+</li>
+<li><p>ControlPath : ssh 用 ControlPath 参数来表示一个连接。%r 表示 ssh 登陆名。%h 表示登陆主机名。%p 表示 ssh 远程登陆端口。</p>
+</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjewxtyrj0009vi4ix309ni3a" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="cjewxtyrg0006vi4ig1pvg2nw" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
-
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/06/19/hexo-node/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/12/05/git-do-not-show-chinese-files/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Hexo与node 6.2.2不兼容解决方法</div>
+      <div class="article-nav-title">Git 不能正常显示中文文件名的问题解决方法</div>
     </a>
   
 </nav>
