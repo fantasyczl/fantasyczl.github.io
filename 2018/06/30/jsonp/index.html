@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Git 不能正常显示中文文件名的问题解决方法 | fantasyczl</title>
+  <title>JSONP的理解 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些中文文件，发现原来在 Git 下，运行 1git status 时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。 大概意思就是 comm">
-<meta name="keywords" content="Git">
+  <meta name="description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
+<meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git 不能正常显示中文文件名的问题解决方法">
-<meta property="og:url" content="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/index.html">
+<meta property="og:title" content="JSONP的理解">
+<meta property="og:url" content="http://fantasyczl.com/2018/06/30/jsonp/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些中文文件，发现原来在 Git 下，运行 1git status 时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。 大概意思就是 comm">
+<meta property="og:description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-05T13:31:08.000Z">
+<meta property="og:updated_time" content="2018-06-30T09:16:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Git 不能正常显示中文文件名的问题解决方法">
-<meta name="twitter:description" content="一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些中文文件，发现原来在 Git 下，运行 1git status 时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。 大概意思就是 comm">
+<meta name="twitter:title" content="JSONP的理解">
+<meta name="twitter:description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-git-do-not-show-chinese-files" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-jsonp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/12/05/git-do-not-show-chinese-files/" class="article-date">
-  <time datetime="2017-12-05T13:11:57.000Z" itemprop="datePublished">2017-12-05</time>
+    <a href="/2018/06/30/jsonp/" class="article-date">
+  <time datetime="2018-06-30T08:46:28.000Z" itemprop="datePublished">2018-06-30</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Git 不能正常显示中文文件名的问题解决方法
+      JSONP的理解
     </h1>
   
 
@@ -88,22 +88,39 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些<br>中文文件，发现原来在 Git 下，运行</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
-<p>时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。<br>于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。</p>
-<p>大概意思就是 command 中输出的文件路径中，如果有“非正常”字符，将会把这些字符以 C 语言转义控制字符那样转义，并把它们放到双引号民中。</p>
-<p>如果 core.quotepath 这个选项的值是 ture, 那么 git 会把字节值大于 0x80 的字符（其实就是非 ASCII 字符）认为是非法字符。<br>这个选项的默认值是 ture.</p>
-<p>所以这个问题的正确解法是，把这个选项设置成 false.</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.quotepath false</span><br></pre></td></tr></table></figure>
-<p>再运行一次 git status, 将会看到，中文文件名可以正常显示了。</p>
+        <p>JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。</p>
+<p>JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。</p>
+<p>我们都知道浏览器安全最基本的就是“同源策略”</p>
+<p><strong> 同源策略是指URL的三个要素:</strong></p>
+<ul>
+<li>协议相同</li>
+<li>域名相同</li>
+<li>端口相同</li>
+</ul>
+<p><strong>它会限制三种行为:</strong></p>
+<ul>
+<li>Cookie、LocalStorage</li>
+<li>DOM 无法获得</li>
+<li>AJAX 请求不能发送</li>
+</ul>
+<p>同源策略的目的是为了保证用户信息的安全。因此是必要的。<br>但是有时候对开发来讲也会不方便，尤其是 ajax 请求。</p>
+<p>因些就是有 jsonp 的方案。</p>
+<p>从上面的限制列表中可以看到，浏览器的同源策略限制了 Cookie, DOM, Ajax, 但是是没有HTML的一些标签，比如:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span><span class="undefined"></span></span><br></pre></td></tr></table></figure>
+<p>比如 A 站点的地址是 <a href="http://example1.com/page/test.html" target="_blank" rel="noopener">http://example1.com/page/test.html</a>, 页面上的 script 是</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://example2.com/test.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>是可以请求到数据，浏览器并不做限制。这样就可以执行 example2.com 上的js文件了。</p>
+<p>但是我们有时候需要一种理自由的处理example2.com 上的数据，就需要在 example2.com 上写一些接口，比如：<br><a href="http://example2.com/test.php" target="_blank" rel="noopener">http://example2.com/test.php</a><br>比如这个接口返回json: {“result”: “This is test”}.<br>但是 script 标签对于返回的 json 并没有什么用。而且script 的返回是由js解析器直接执行了。<br>因此，我们可以直接 js 函数，或者 js 函数的调用，比如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process(&#123;<span class="string">"result"</span>: <span class="string">"This is test"</span>&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样我们就实现了在 example1.com 站点上调用 example2.com 上数据的目的。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="cjj15yj3j0001hz4i5auzuxcm" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="cjj15yj3u0009hz4igz1pwi1q" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -111,19 +128,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/03/18/ssh-sharing-sessions/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Mac 下 SSH Clone Session
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/09/17/Python-raw-string-end-with-backlash/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/03/18/ssh-sharing-sessions/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Python raw 字符串不能以反斜线结尾</div>
+      <div class="article-nav-title">Mac 下 SSH Clone Session</div>
     </a>
   
 </nav>

@@ -63,6 +63,69 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-jsonp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/30/jsonp/" class="article-date">
+  <time datetime="2018-06-30T08:46:28.000Z" itemprop="datePublished">2018-06-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/30/jsonp/">JSONP的理解</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。</p>
+<p>JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。</p>
+<p>我们都知道浏览器安全最基本的就是“同源策略”</p>
+<p><strong> 同源策略是指URL的三个要素:</strong></p>
+<ul>
+<li>协议相同</li>
+<li>域名相同</li>
+<li>端口相同</li>
+</ul>
+<p><strong>它会限制三种行为:</strong></p>
+<ul>
+<li>Cookie、LocalStorage</li>
+<li>DOM 无法获得</li>
+<li>AJAX 请求不能发送</li>
+</ul>
+<p>同源策略的目的是为了保证用户信息的安全。因此是必要的。<br>但是有时候对开发来讲也会不方便，尤其是 ajax 请求。</p>
+<p>因些就是有 jsonp 的方案。</p>
+<p>从上面的限制列表中可以看到，浏览器的同源策略限制了 Cookie, DOM, Ajax, 但是是没有HTML的一些标签，比如:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span><span class="undefined"></span></span><br></pre></td></tr></table></figure>
+<p>比如 A 站点的地址是 <a href="http://example1.com/page/test.html" target="_blank" rel="noopener">http://example1.com/page/test.html</a>, 页面上的 script 是</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://example2.com/test.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>是可以请求到数据，浏览器并不做限制。这样就可以执行 example2.com 上的js文件了。</p>
+<p>但是我们有时候需要一种理自由的处理example2.com 上的数据，就需要在 example2.com 上写一些接口，比如：<br><a href="http://example2.com/test.php" target="_blank" rel="noopener">http://example2.com/test.php</a><br>比如这个接口返回json: {“result”: “This is test”}.<br>但是 script 标签对于返回的 json 并没有什么用。而且script 的返回是由js解析器直接执行了。<br>因此，我们可以直接 js 函数，或者 js 函数的调用，比如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process(&#123;<span class="string">"result"</span>: <span class="string">"This is test"</span>&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样我们就实现了在 example1.com 站点上调用 example2.com 上数据的目的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="cjj15yj3u0009hz4igz1pwi1q" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ssh-sharing-sessions" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/03/18/ssh-sharing-sessions/" class="article-date">
@@ -89,10 +152,10 @@
 <p>但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。</p>
 <p>发现其实是 ssh config 的一个功能。所以实现过程如果下：</p>
 <p>先切到 .ssh 目录。在主目录下，</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> .ssh</div></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> .ssh</span><br></pre></td></tr></table></figure>
 <p>然后新建一个 config 文件，并且内容为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi config</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">host *</div><div class="line">ControlMaster auto</div><div class="line">ControlPath ~/.ssh/master-%r@%h:%p</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi config</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">host *</span><br><span class="line">ControlMaster auto</span><br><span class="line">ControlPath ~/.ssh/master-%r@%h:%p</span><br></pre></td></tr></table></figure>
 <p>然后你在一个终端下用 ssh 登陆服务器，是需要输入密码的，再新建一个终端tab, 再 ssh 到同一个服务，这次就不用输入密码了，自动登陆。<br>到此，克隆会话完成。</p>
 <p>Config 内容解释：</p>
 <ul>
@@ -107,7 +170,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="cjewxtyrg0006vi4ig1pvg2nw" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="cjj15yj3q0006hz4ia6wh9t3m" class="article-share-link">Share</a>
       
       
     </footer>
@@ -140,18 +203,18 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些<br>中文文件，发现原来在 Git 下，运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git status</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
 <p>时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。<br>于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。</p>
 <p>大概意思就是 command 中输出的文件路径中，如果有“非正常”字符，将会把这些字符以 C 语言转义控制字符那样转义，并把它们放到双引号民中。</p>
 <p>如果 core.quotepath 这个选项的值是 ture, 那么 git 会把字节值大于 0x80 的字符（其实就是非 ASCII 字符）认为是非法字符。<br>这个选项的默认值是 ture.</p>
 <p>所以这个问题的正确解法是，把这个选项设置成 false.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --global core.quotepath false</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.quotepath false</span><br></pre></td></tr></table></figure>
 <p>再运行一次 git status, 将会看到，中文文件名可以正常显示了。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="cjewxtyre0003vi4ipviq2fat" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="cjj15yj3j0001hz4i5auzuxcm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
@@ -196,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cjewxtyr20000vi4ioaddb3y8" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="cjj15yj3e0000hz4i4m0kg11i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
@@ -231,18 +294,18 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>Laravel 5.3 的 Authorization 使用非常方便，一般的用法是在 Controller 中手动调用.</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> ($user-&gt;can(<span class="string">'view'</span>, $post)) &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($user-&gt;can(<span class="string">'view'</span>, $post)) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这已经非常方便了，但是 Laravel 还提供了一种更方便的方法，使用 Middleware 在 Route 中 authorization.<br>但是我按官方文档上的说明进行调用，参数总不能正确解析：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'can:view,post'</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'can:view,post'</span>);</span><br></pre></td></tr></table></figure>
 <p>通过这样调用，Controller 中接到的参数仍然是 post id, 是个数字。</p>
 <p>放狗搜了一下才知道，原来是需要先使用 Middleware bings 来对参数进行绑定。代码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'bindings'</span>, <span class="string">'can:view,post'</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Route::get(<span class="string">'/posts/&#123;post&#125;'</span>, <span class="string">'PostController@show'</span>)-&gt;middleware(<span class="string">'bindings'</span>, <span class="string">'can:view,post'</span>);</span><br></pre></td></tr></table></figure>
 <p>一试果然管用。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cjewxtyra0001vi4i2boqfw68" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="cjj15yj3n0003hz4iawlvhq6p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
@@ -277,15 +340,15 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。<br>打开.vimrc。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></div><div class="line">    <span class="keyword">set</span> background=dark</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">set</span> background=light</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></span><br><span class="line">    <span class="keyword">set</span> background=dark</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">set</span> background=light</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
 <p>这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没有关，背景也不会有变化。所以下一步我们就是要解决这个问题。<br>每次用vim写代码，:w用的很多。所以我们在每次保存文件的时候，执行一次~/.vimrc文件。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</div><div class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
 <p>至此，已经完成。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjewxtyrj0009vi4ix309ni3a" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjj15yj3w000chz4i3fo2jcm1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -320,12 +383,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>解决方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm rebuild hexo</div><div class="line">rm -fr node_modules/</div><div class="line">npm -i --no-optional</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm rebuild hexo</span><br><span class="line">rm -fr node_modules/</span><br><span class="line">npm -i --no-optional</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cjewxtyrf0004vi4ike3sxml4" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="cjj15yj3p0004hz4itna5ccbr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -358,15 +421,15 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。<br>后来才发现，vim里有一个这样的命令来解决这个问题。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> paste</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> paste</span><br></pre></td></tr></table></figure>
 <p>进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> nopaste</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> nopaste</span><br></pre></td></tr></table></figure>
 <p>回到正常模式。<br>粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cjewxtyrl000bvi4iaawsgm5n" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cjj15yj3y000dhz4iph3x9q95" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
@@ -405,18 +468,18 @@
 <h3 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h3><p>用GitHub很久了，找些开源库，写些小项目什么的，工作中也一直用git来做版本管理，因此这些先略过不表</p>
 <h3 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h3><p>Hexo是一个快速、简洁且高效的博客框架。支持Markdown解析文章，因此就选了Hexo</p>
 <h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>这之前需要先安装Node.js</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm install -g hexo-cli</div><div class="line">npm install hexo --save</div></pre></td></tr></table></figure>
-<h4 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h4><p>安装好后，进入博客根目录，执行以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init</div></pre></td></tr></table></figure></p>
-<h4 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试"></a>本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo server</div></pre></td></tr></table></figure></p>
-<h4 id="Hexo简写命令"><a href="#Hexo简写命令" class="headerlink" title="Hexo简写命令"></a>Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">hexo n <span class="comment">#new</span></div><div class="line">hexo g <span class="comment">#generate</span></div><div class="line">hexo s <span class="comment">#server</span></div></pre></td></tr></table></figure>
-<h4 id="本地设置"><a href="#本地设置" class="headerlink" title="本地设置"></a>本地设置</h4><p>打开_config.yml，设置发布方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">    <span class="built_in">type</span>: git</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">npm install hexo --save</span><br></pre></td></tr></table></figure>
+<h4 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h4><p>安装好后，进入博客根目录，执行以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
+<h4 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试"></a>本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h4 id="Hexo简写命令"><a href="#Hexo简写命令" class="headerlink" title="Hexo简写命令"></a>Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
+<h4 id="本地设置"><a href="#本地设置" class="headerlink" title="本地设置"></a>本地设置</h4><p>打开_config.yml，设置发布方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    <span class="built_in">type</span>: git</span><br></pre></td></tr></table></figure></p>
 <h3 id="在GitHub创建一个项目xxx-github-io"><a href="#在GitHub创建一个项目xxx-github-io" class="headerlink" title="在GitHub创建一个项目xxx.github.io"></a>在GitHub创建一个项目xxx.github.io</h3><p>用git clone 到本地</p>
-<h3 id="部署静态网页"><a href="#部署静态网页" class="headerlink" title="部署静态网页"></a>部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo g</div><div class="line">hexo d</div></pre></td></tr></table></figure></p>
+<h3 id="部署静态网页"><a href="#部署静态网页" class="headerlink" title="部署静态网页"></a>部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cjewxtyri0008vi4igqqwgnzf" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="cjj15yj3s0008hz4ir8p1xsv9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -437,7 +500,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -446,7 +509,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/vim/" style="font-size: 20px;">vim</a>
+      <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/vim/" style="font-size: 20px;">vim</a>
     </div>
   </div>
 
@@ -455,7 +518,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -465,6 +528,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/06/30/jsonp/">JSONP的理解</a>
+          </li>
         
           <li>
             <a href="/2018/03/18/ssh-sharing-sessions/">Mac 下 SSH Clone Session</a>
@@ -480,10 +547,6 @@
         
           <li>
             <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/">Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析</a>
-          </li>
-        
-          <li>
-            <a href="/2016/06/19/vim-change-background-by-time/">VIM白天用Dark背景，晚上用Light背景</a>
           </li>
         
       </ul>
