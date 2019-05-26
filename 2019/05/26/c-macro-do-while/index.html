@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Vim粘贴代码格式乱的问题 | fantasyczl</title>
+  <title>C语言宏定义中为什么使用do while(0) | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。后来才发现，vim里有一个这样的命令来解决这个问题。 1:set paste 进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。 1:set nopaste 回到正常模式。粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。">
-<meta name="keywords" content="vim">
+  <meta name="description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
+<meta name="keywords" content="C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vim粘贴代码格式乱的问题">
-<meta property="og:url" content="http://fantasyczl.com/2016/06/14/vim-paste/index.html">
+<meta property="og:title" content="C语言宏定义中为什么使用do while(0)">
+<meta property="og:url" content="http://fantasyczl.com/2019/05/26/c-macro-do-while/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。后来才发现，vim里有一个这样的命令来解决这个问题。 1:set paste 进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。 1:set nopaste 回到正常模式。粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。">
+<meta property="og:description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-17T13:54:03.000Z">
+<meta property="og:updated_time" content="2019-05-26T08:49:41.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vim粘贴代码格式乱的问题">
-<meta name="twitter:description" content="从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。后来才发现，vim里有一个这样的命令来解决这个问题。 1:set paste 进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。 1:set nopaste 回到正常模式。粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。">
+<meta name="twitter:title" content="C语言宏定义中为什么使用do while(0)">
+<meta name="twitter:description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-vim-paste" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-c-macro-do-while" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/06/14/vim-paste/" class="article-date">
-  <time datetime="2016-06-14T05:54:28.000Z" itemprop="datePublished">2016-06-14</time>
+    <a href="/2019/05/26/c-macro-do-while/" class="article-date">
+  <time datetime="2019-05-26T08:35:11.000Z" itemprop="datePublished">2019-05-26</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Vim粘贴代码格式乱的问题
+      C语言宏定义中为什么使用do while(0)
     </h1>
   
 
@@ -88,19 +88,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>从别的地方往vim里复制内容的时候，尤其是代码，会因为vim的缩进，造成格式全都乱掉。<br>后来才发现，vim里有一个这样的命令来解决这个问题。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> paste</span><br></pre></td></tr></table></figure>
-<p>进入粘贴模式，这个时候缩进不再起作用。复制粘贴完之后。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> nopaste</span><br></pre></td></tr></table></figure>
-<p>回到正常模式。<br>粘贴模式是为了让vim区分用户键盘打入的内容与粘贴内容的区别。</p>
+        <p>C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.<br>我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次.</p>
+<p>这是为什么呢?</p>
+<p>我们来看一个例子:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TEST(a, b)  a++; b++;</span></span><br></pre></td></tr></table></figure></p>
+<p>这是个宏声明.</p>
+<p>如果这个宏使用以下场景中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>这种情况下, 编译器会报错. 因为宏替换后, if () 后只包含 a++; 而 b_++; 会被编译器认为是 if 之外的语句.</p>
+<p>这种情况也可以在 if 后问题带上 {} 来解决. 但是这不能从程序上完全保证.</p>
+<p>那另外的解决方案是宏定义可以使用 {} . 但是这会引用另一个问题.<br>我们写程序, 不管是正常语句还是宏调用. 都习惯在最后写一个分号.<br>那如果宏后面有分号, 宏替换后, 会变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>宏替换后变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">&#123; a++; b++; &#125;;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>同样会编译不通过. 宏最后的分号会被认识是一个空语句, 而且是在 if () 包含之外.</p>
+<p>如果换成 do {} while(0) 呢?<br>我们看一下<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    <span class="keyword">do</span> &#123; &#125; <span class="keyword">while</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>这样就没有问题, 编译会通完, 而且也没有歧义. 所以这是业界最佳实践.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="cjw4pffvq000ctl4i8u2p4jef" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/05/26/c-macro-do-while/" data-id="cjw4pffvh0003tl4i7w3qeecw" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li></ul>
 
     </footer>
   </div>
@@ -108,19 +115,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/06/19/hexo-node/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Hexo与node 6.2.2不兼容解决方法
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/08/30/the-first-post/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/06/30/jsonp/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">GitHub Blog启程了</div>
+      <div class="article-nav-title">JSONP的理解</div>
     </a>
   
 </nav>
