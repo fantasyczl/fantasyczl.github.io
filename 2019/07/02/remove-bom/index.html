@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2017/12 | fantasyczl</title>
+  <title>怎么删除文件开头的UTF8 BOM | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="fantasyczl">
-<meta property="og:url" content="http://fantasyczl.com/archives/2017/12/index.html">
+  <meta name="description" content="Bom 是指文件开头的三个连续字节. 0xEF 0xBB 0xBF.所以我们只要匹配并处理字就可以了.  PHP代码如下12$bom = pack(&apos;H*&apos;,&apos;EFBBBF&apos;);$text = preg_replace(&quot;/^$bom/&quot;, &apos;&apos;, $text); Python代码如下:12345import codesif line[:3] == codecs.BOM_UTF8:    prin">
+<meta name="keywords" content="PHP,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="怎么删除文件开头的UTF8 BOM">
+<meta property="og:url" content="http://fantasyczl.com/2019/07/02/remove-bom/index.html">
 <meta property="og:site_name" content="fantasyczl">
+<meta property="og:description" content="Bom 是指文件开头的三个连续字节. 0xEF 0xBB 0xBF.所以我们只要匹配并处理字就可以了.  PHP代码如下12$bom = pack(&apos;H*&apos;,&apos;EFBBBF&apos;);$text = preg_replace(&quot;/^$bom/&quot;, &apos;&apos;, $text); Python代码如下:12345import codesif line[:3] == codecs.BOM_UTF8:    prin">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-02T05:46:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fantasyczl">
+<meta name="twitter:title" content="怎么删除文件开头的UTF8 BOM">
+<meta name="twitter:description" content="Bom 是指文件开头的三个连续字节. 0xEF 0xBB 0xBF.所以我们只要匹配并处理字就可以了.  PHP代码如下12$bom = pack(&apos;H*&apos;,&apos;EFBBBF&apos;);$text = preg_replace(&quot;/^$bom/&quot;, &apos;&apos;, $text); Python代码如下:12345import codesif line[:3] == codecs.BOM_UTF8:    prin">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -61,39 +66,56 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/12/05/git-do-not-show-chinese-files/" class="archive-article-date">
-  <time datetime="2017-12-05T13:11:57.000Z" itemprop="datePublished">12月 5</time>
+        <section id="main"><article id="post-remove-bom" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/02/remove-bom/" class="article-date">
+  <time datetime="2019-07-02T05:31:41.000Z" itemprop="datePublished">2019-07-02</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/05/git-do-not-show-chinese-files/">Git 不能正常显示中文文件名的问题解决方法</a>
+    <h1 class="article-title" itemprop="name">
+      怎么删除文件开头的UTF8 BOM
     </h1>
   
 
-    </header>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Bom 是指文件开头的三个连续字节. 0xEF 0xBB 0xBF.<br>所以我们只要匹配并处理字就可以了. </p>
+<h2 id="PHP代码如下"><a href="#PHP代码如下" class="headerlink" title="PHP代码如下"></a>PHP代码如下</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$bom = pack(<span class="string">'H*'</span>,<span class="string">'EFBBBF'</span>);</span><br><span class="line">$text = preg_replace(<span class="string">"/^$bom/"</span>, <span class="string">''</span>, $text);</span><br></pre></td></tr></table></figure>
+<h2 id="Python代码如下"><a href="#Python代码如下" class="headerlink" title="Python代码如下:"></a>Python代码如下:</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> codes</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> line[:<span class="number">3</span>] == codecs.BOM_UTF8:</span><br><span class="line">    print(<span class="string">'BOM'</span>)</span><br><span class="line">    line = line[<span class="number">3</span>:]</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2019/07/02/remove-bom/" data-id="cjxle4o020009zy4iktzo81e7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP-Python/">PHP,Python</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/05/26/c-macro-do-while/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">C语言宏定义中为什么使用do while(0)</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
 </section>
         
           <aside id="sidebar">
