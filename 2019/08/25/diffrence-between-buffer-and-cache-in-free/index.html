@@ -5,18 +5,18 @@
   
   <title>Linux free命令中的buffer和cache有什么区别? | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存里  另一个">
+  <meta name="description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 如下图:123              total        used        free      shared  buff/cache   availableMem:        1009028      318676      114392       21640      575960      4">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux free命令中的buffer和cache有什么区别?">
 <meta property="og:url" content="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存里  另一个">
+<meta property="og:description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 如下图:123              total        used        free      shared  buff/cache   availableMem:        1009028      318676      114392       21640      575960      4">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-25T02:39:45.000Z">
+<meta property="og:updated_time" content="2019-08-25T02:42:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux free命令中的buffer和cache有什么区别?">
-<meta name="twitter:description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存里  另一个">
+<meta name="twitter:description" content="在Linux的free命令输出中, 有一个buffer 和 cache 字段. 如下图:123              total        used        free      shared  buff/cache   availableMem:        1009028      318676      114392       21640      575960      4">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -88,7 +88,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?<br>查资料后发现:</p>
+        <p>在Linux的free命令输出中, 有一个buffer 和 cache 字段. 如下图:<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:       <span class="number"> 1009028 </span>    <span class="number"> 318676 </span>    <span class="number"> 114392 </span>     <span class="number"> 21640 </span>    <span class="number"> 575960 </span>     488928</span><br><span class="line">Swap:            <span class="number"> 0 </span>         <span class="number"> 0 </span>          0</span><br></pre></td></tr></table></figure></p>
+<p>它们代表什么意思呢?</p>
+<p>查资料后发现:</p>
 <ul>
 <li>buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据.</li>
 <li>cache 是为了快速访问而将频繁用到的数据临时保存在内存里</li>
@@ -99,7 +101,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="cjzqd8ary0004534iotxzigo3" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="cjzqda6oi0004ds4i64us0b2o" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
