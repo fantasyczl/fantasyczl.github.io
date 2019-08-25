@@ -3,20 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>VIM白天用Dark背景，晚上用Light背景 | fantasyczl</title>
+  <title>Linux free命令中的buffer和cache有什么区别? | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
-<meta name="keywords" content="vim">
+  <meta name="description" content="Linux 在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta property="og:url" content="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/index.html">
+<meta property="og:title" content="Linux free命令中的buffer和cache有什么区别?">
+<meta property="og:url" content="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
+<meta property="og:description" content="Linux 在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-17T13:54:01.000Z">
+<meta property="og:updated_time" content="2019-08-25T02:37:46.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VIM白天用Dark背景，晚上用Light背景">
-<meta name="twitter:description" content="启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。打开.vimrc。 12345if strftime(&quot;%H&quot;) &amp;gt; 6 &amp;amp;&amp;amp; strftime(&quot;%H&quot;) &amp;lt; 18    set background=darkelse    set background=lightendif 这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没">
+<meta name="twitter:title" content="Linux free命令中的buffer和cache有什么区别?">
+<meta name="twitter:description" content="Linux 在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?查资料后发现:  buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据. cache 是为了快速访问而将频繁用到的数据临时保存在内存">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -66,10 +65,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-vim-change-background-by-time" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-diffrence-between-buffer-and-cache-in-free" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/06/19/vim-change-background-by-time/" class="article-date">
-  <time datetime="2016-06-19T02:56:49.000Z" itemprop="datePublished">2016-06-19</time>
+    <a href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/" class="article-date">
+  <time datetime="2019-08-25T02:29:35.000Z" itemprop="datePublished">2019-08-25</time>
 </a>
     
   </div>
@@ -80,7 +79,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      VIM白天用Dark背景，晚上用Light背景
+      Linux free命令中的buffer和cache有什么区别?
     </h1>
   
 
@@ -88,39 +87,31 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>启动vim的时候，根据现在的时间是白天还是晚上，应用不同的背景。<br>打开.vimrc。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &gt; <span class="number">6</span> &amp;&amp; <span class="built_in">strftime</span>(<span class="string">"%H"</span>) &lt; <span class="number">18</span></span><br><span class="line">    <span class="keyword">set</span> background=dark</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">set</span> background=light</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
-<p>这只会在启动vim的时候启用不同的背景。如果是vim从白天打开，到晚上一直没有关，背景也不会有变化。所以下一步我们就是要解决这个问题。<br>每次用vim写代码，:w用的很多。所以我们在每次保存文件的时候，执行一次~/.vimrc文件。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'autocmd'</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> bufwritepost * <span class="keyword">source</span> ~/.vimrc</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
-<p>至此，已经完成。</p>
+        <p>Linux</p>
+<p>在Linux的free命令输出中, 有一个buffer 和 cache 字段. 它们代表什么意思呢?<br>查资料后发现:</p>
+<ul>
+<li>buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据.</li>
+<li>cache 是为了快速访问而将频繁用到的数据临时保存在内存里</li>
+</ul>
+<p>另一个不同是cache将会多次使用, 而buffer只会使用一次.</p>
+<p>但是他们都是为了处理数据而临时存储.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="cjzqd4wa5000g0h4inkorwle8" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="cjzqd4w9n00040h4iln9b3pk2" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
-
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2017/01/13/authorization-and-bindings-in-laravel5-3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Laravel 5.3 中使用Authorizatioin Middleware时，参数不能正确解析
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/06/19/hexo-node/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2019/07/02/remove-bom/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Hexo与node 6.2.2不兼容解决方法</div>
+      <div class="article-nav-title">怎么删除文件开头的UTF8 BOM</div>
     </a>
   
 </nav>
