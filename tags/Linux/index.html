@@ -3,19 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Mac 下 SSH Clone Session | fantasyczl</title>
+  <title>Tag: Linux | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Mac 下 SSH Clone Session">
-<meta property="og:url" content="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="fantasyczl">
+<meta property="og:url" content="http://fantasyczl.com/tags/Linux/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-18T15:30:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mac 下 SSH Clone Session">
-<meta name="twitter:description" content="因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。 但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。 发现其实是 ssh config 的一个功能。所以实现过程如果下： 先切到 .ssh 目录。在主目录下， 1cd .ssh 然后新建一">
+<meta name="twitter:title" content="fantasyczl">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -65,79 +61,39 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-ssh-sharing-sessions" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/18/ssh-sharing-sessions/" class="article-date">
-  <time datetime="2018-03-18T15:09:47.000Z" itemprop="datePublished">2018-03-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      Mac 下 SSH Clone Session
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/" class="archive-article-date">
+  <time datetime="2019-08-25T02:29:35.000Z" itemprop="datePublished">8月 25</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/">Linux free命令中的buffer和cache有什么区别?</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>因为公司用的是 windows 电脑，连接服务器使用的是 SecureCRT. 这个软件有个非常好用的功能，克隆会话。每天只需要第一次连接的时候使用密码，其它时候就直接克隆会话。</p>
-<p>但是回家后是使用自己的 Mac, 于是也想实现这样的效果。于是 Google 一下。</p>
-<p>发现其实是 ssh config 的一个功能。所以实现过程如果下：</p>
-<p>先切到 .ssh 目录。在主目录下，</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> .ssh</span><br></pre></td></tr></table></figure>
-<p>然后新建一个 config 文件，并且内容为：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi config</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">host *</span><br><span class="line">ControlMaster auto</span><br><span class="line">ControlPath ~/.ssh/master-%r@%h:%p</span><br></pre></td></tr></table></figure>
-<p>然后你在一个终端下用 ssh 登陆服务器，是需要输入密码的，再新建一个终端tab, 再 ssh 到同一个服务，这次就不用输入密码了，自动登陆。<br>到此，克隆会话完成。</p>
-<p>Config 内容解释：</p>
-<ul>
-<li><p>host : ssh 的 confg 是按 host 来匹配的。这里星号表示下面的配置适用于所有的主机。</p>
-</li>
-<li><p>ControlMaster : 开启同一个网络连接的 session 共享。这里可以有多个值，auto 表示后面新建的 ssh 连接的时候，如果存在 master 连接，就复用，如果不存在，就新建一个。新建的话是需要输入密码的。</p>
-</li>
-<li><p>ControlPath : ssh 用 ControlPath 参数来表示一个连接。%r 表示 ssh 登陆名。%h 表示登陆主机名。%p 表示 ssh 远程登陆端口。</p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="cjzqd4w9y000c0h4im06dsiwv" class="article-share-link">Share</a>
-      
-      
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2018/06/30/jsonp/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          JSONP的理解
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/12/05/git-do-not-show-chinese-files/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Git 不能正常显示中文文件名的问题解决方法</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
+  
+  
+    </div></section>
+  
 </section>
         
           <aside id="sidebar">
