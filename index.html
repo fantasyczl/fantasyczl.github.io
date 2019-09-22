@@ -86,13 +86,14 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>今天看到一篇博客, 有人实现了 shell 的面向对象功能. 虽然class new 等是用函数实现的, 但是思想非常巧妙, 很有意思, 所以就把它贴在这里, 记录一下.<br>而且看起来还不是很容易弄明白, 可以打开 set -x 配合源码一起看.</p>
+<p>其中使用到了 uuidgen, 依赖于系统中的 uuid-runtime. 如果没有安装, 请安装对应的库, ubuntu中的命令是:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install uuid-runtime</span><br></pre></td></tr></table></figure></p>
 <p>原文地址: <a href="https://coolshell.cn/articles/5035.html" target="_blank" rel="noopener">https://coolshell.cn/articles/5035.html</a></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> OO support <span class="built_in">functions</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">set</span> -x</span></span><br><span class="line"></span><br><span class="line">DEFCLASS=""</span><br><span class="line">CLASS=""</span><br><span class="line">THIS=0</span><br><span class="line"></span><br><span class="line">class() &#123;</span><br><span class="line">    DEFCLASS="$1"</span><br><span class="line">    eval CLASS_$&#123;DEFCLASS&#125;_VARS=""</span><br><span class="line">    eval CLASS_$&#123;DEFCLASS&#125;_FUNCTIONS=""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static() &#123;</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func() &#123;</span><br><span class="line">    local varname="CLASS_$&#123;DEFCLASS&#125;_FUNCTIONS"</span><br><span class="line">    eval "$varname=\"\$&#123;$varname&#125;$1 \""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var() &#123;</span><br><span class="line">    local varname="CLASS_$&#123;DEFCLASS&#125;_VARS"</span><br><span class="line">    eval $varname="\"\$&#123;$varname&#125;$1 \""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadvar() &#123;</span><br><span class="line">    eval "varlist=\"\$CLASS_$&#123;CLASS&#125;_VARS\""</span><br><span class="line">    for var in $varlist; do</span><br><span class="line">        eval "$var=\"\$INSTANCE_$&#123;THIS&#125;_$var\""</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadfunc() &#123;</span><br><span class="line">    eval "funclist=\"\$CLASS_$&#123;CLASS&#125;_FUNCTIONS\""</span><br><span class="line">    for func in $funclist; do</span><br><span class="line">        eval "$&#123;func&#125;() &#123; $&#123;CLASS&#125;::$&#123;func&#125; \"\$@\"; return \$?; &#125;"</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">savevar() &#123;</span><br><span class="line">    eval "varlist=\"\$CLASS_$&#123;CLASS&#125;_VARS\""</span><br><span class="line">    for var in $varlist; do</span><br><span class="line">        eval "INSTANCE_$&#123;THIS&#125;_$var=\"\$$var\""</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">typeof() &#123;</span><br><span class="line">    eval echo \$TYPEOF_$1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">new() &#123;</span><br><span class="line">    local class="$1"</span><br><span class="line">    local cvar="$2"</span><br><span class="line">    shift</span><br><span class="line">    shift</span><br><span class="line">    local id=$(uuidgen | tr A-F a-f | sed -e "s/-//g")</span><br><span class="line">    eval TYPEOF_$&#123;id&#125;=$class</span><br><span class="line">    eval $cvar=$id</span><br><span class="line">    local funclist</span><br><span class="line">    eval "funclist=\"\$CLASS_$&#123;class&#125;_FUNCTIONS\""</span><br><span class="line">    for func in $funclist; do</span><br><span class="line">        eval "$&#123;cvar&#125;.$&#123;func&#125;() &#123;</span><br><span class="line">            local t=\$THIS; THIS=$id; local c=\$CLASS; CLASS=$class; loadvar;</span><br><span class="line">            loadfunc; $&#123;class&#125;::$&#123;func&#125; \"\$@\"; rt=\$?; savevar; CLASS=\$c;</span><br><span class="line">            THIS=\$t; return $rt;</span><br><span class="line">        &#125;"</span><br><span class="line">    done</span><br><span class="line">    eval "$&#123;cvar&#125;.$&#123;class&#125; \"\$@\" || true"</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Example code</span></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> class definition</span></span><br><span class="line">class Storpel</span><br><span class="line">    func Storpel</span><br><span class="line">    func setName</span><br><span class="line">    func setQuality</span><br><span class="line">    func print</span><br><span class="line">    var name</span><br><span class="line">    var quality</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> class implementation</span></span><br><span class="line">Storpel::Storpel() &#123;</span><br><span class="line">    setName "$1"</span><br><span class="line">    setQuality "$2"</span><br><span class="line">    if [ -z "$name" ]; then setName "Generic"; fi</span><br><span class="line">    if [ -z "$quality" ]; then setQuality "Normal"; fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Storpel::setName() &#123; name="$1"; &#125;</span><br><span class="line">Storpel::setQuality() &#123; quality="$1"; &#125;</span><br><span class="line">Storpel::print() &#123; echo "$name ($quality)"; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">new Storpel one "Storpilator 1000" Medium</span><br><span class="line">new Storpel two</span><br><span class="line">new Storpel three</span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line">two.setName "Storpilator 2000"</span><br><span class="line">two.setQuality "Strong"</span><br><span class="line"></span><br><span class="line">one.print</span><br><span class="line">two.print</span><br><span class="line">three.print</span><br><span class="line"></span><br><span class="line">echo ""</span><br><span class="line">echo "one: $one ($(typeof $one))"</span><br><span class="line">echo "two: $two ($(typeof $two))"</span><br><span class="line">echo "Three: $three ($(typeof $three))"</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ck0usj9nt000bsi4ir2zodz1g" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ck0usoh4t000bk34i0x85lj4z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
@@ -139,7 +140,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="ck0usj9nm0004si4is38cgzvq" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="ck0usoh450004k34io6r1abjw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -179,7 +180,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/07/02/remove-bom/" data-id="ck0usj9nx000esi4iwpl1uo0r" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/07/02/remove-bom/" data-id="ck0usoh4u000ck34ie7mz1nb1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP-Python/">PHP,Python</a></li></ul>
@@ -229,7 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/05/26/c-macro-do-while/" data-id="ck0usj9nl0003si4imd2lek8r" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/05/26/c-macro-do-while/" data-id="ck0usoh3z0003k34ijpu5fx0c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li></ul>
@@ -292,7 +293,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="ck0usj9nr0009si4i47b3heeq" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="ck0usoh4m0009k34iiaknm8cf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
@@ -348,7 +349,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="ck0usj9nv000csi4i9v788n41" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/03/18/ssh-sharing-sessions/" data-id="ck0usoh52000ek34ig1nb0921" class="article-share-link">Share</a>
       
       
     </footer>
@@ -392,7 +393,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="ck0usj9no0006si4isfmdrqec" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="ck0usoh4a0006k34i8ojgw6tl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
@@ -437,7 +438,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="ck0usj9nb0000si4iuj4jeq8g" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="ck0usoh360000k34isp7oc8fe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
@@ -483,7 +484,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="ck0usj9nf0001si4iwjy0sa60" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="ck0usoh3m0001k34ifetw2f77" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
@@ -526,7 +527,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="ck0usj9o3000jsi4iamm6h3zz" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="ck0usoh5h000jk34i6kvu2kgc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
