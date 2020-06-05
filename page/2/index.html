@@ -65,6 +65,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-do-not-show-chinese-files" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/05/git-do-not-show-chinese-files/" class="article-date">
+  <time datetime="2017-12-05T13:11:57.000Z" itemprop="datePublished">2017-12-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/05/git-do-not-show-chinese-files/">Git 不能正常显示中文文件名的问题解决方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一直以来都使用 Git 来管理代码，而代码的文件名都是英文，因此从来没有试过用 Git 来管理中文文件。今天偶然想使用 Git 来管理一些<br>中文文件，发现原来在 Git 下，运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+<p>时中文文件名显示的转义名，就是以 ‘\’ 开头的字符。<br>于是就查了 Git 的 man 手册。原来 git config 中一项，core.quotePath 造成这样的问题。</p>
+<p>大概意思就是 command 中输出的文件路径中，如果有“非正常”字符，将会把这些字符以 C 语言转义控制字符那样转义，并把它们放到双引号民中。</p>
+<p>如果 core.quotepath 这个选项的值是 ture, 那么 git 会把字节值大于 0x80 的字符（其实就是非 ASCII 字符）认为是非法字符。<br>这个选项的默认值是 ture.</p>
+<p>所以这个问题的正确解法是，把这个选项设置成 false.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.quotepath false</span><br></pre></td></tr></table></figure>
+<p>再运行一次 git status, 将会看到，中文文件名可以正常显示了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2017/12/05/git-do-not-show-chinese-files/" data-id="ckb2g4q0i0005vr4i8cqcbc4e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Python-raw-string-end-with-backlash" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/17/Python-raw-string-end-with-backlash/" class="article-date">
@@ -98,7 +144,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="ckb2fhqnn0000c94ifgmsgxgh" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/09/17/Python-raw-string-end-with-backlash/" data-id="ckb2g4q0g0002vr4i3fn4ay31" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
@@ -144,7 +190,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="ckb2fhqnt0001c94i5q2h275x" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2017/01/13/authorization-and-bindings-in-laravel5-3/" data-id="ckb2g4q0f0001vr4iczd33nx2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
@@ -187,7 +233,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="ckb2fhqo3000dc94i1y1tg472" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/vim-change-background-by-time/" data-id="ckb2g4q0q000fvr4i6r963gc1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/" rel="tag">vim</a></li></ul>
@@ -227,7 +273,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="ckb2fhqnv0003c94ic6ktc267" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/19/hexo-node/" data-id="ckb2g4q0n000bvr4igw8vaai6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -268,7 +314,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="ckb2fhqo5000ec94i6ea13alt" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2016/06/14/vim-paste/" data-id="ckb2g4q0p000evr4ibo6t9p2k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/" rel="tag">vim</a></li></ul>
@@ -318,7 +364,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="ckb2fhqo2000cc94ic96b0g2b" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="ckb2g4q0n000cvr4ih2to5iw9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -343,7 +389,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -352,7 +398,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/PHP/" style="font-size: 15px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Shell/" style="font-size: 15px;">Shell</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 15px;">vim</a>
+      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 15px;">Git</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/PHP/" style="font-size: 15px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Shell/" style="font-size: 15px;">Shell</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 15px;">vim</a>
     </div>
   </div>
 
@@ -361,7 +407,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -371,6 +417,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/06/06/20200606-git-rebase-merge-difference/">Git rebase 与 merge 的区别</a>
+          </li>
         
           <li>
             <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/">怎样在Ubuntu下设置交换内存</a>
@@ -386,10 +436,6 @@
         
           <li>
             <a href="/2019/09/22/shell-oop/">shell实现面向对象编程</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/">Linux free命令中的buffer和cache有什么区别?</a>
           </li>
         
       </ul>
