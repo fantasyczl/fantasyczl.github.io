@@ -6,17 +6,17 @@
   <title>JSONP的理解 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
-<meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JSONP的理解">
 <meta property="og:url" content="http://fantasyczl.com/2018/06/30/jsonp/index.html">
 <meta property="og:site_name" content="fantasyczl">
 <meta property="og:description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-06-30T09:16:36.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-06-30T08:46:28.000Z">
+<meta property="article:modified_time" content="2018-06-30T09:16:36.000Z">
+<meta property="article:author" content="fantasyczl">
+<meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JSONP的理解">
-<meta name="twitter:description" content="JSONP作为js跨域请求的一个方案，很早就知道了，一直没有详细了解。今天了解了一下，记录下来。 JSONP 是 JSON with Padding 是缩写。是指定数据格式json的一种使用模式，可以让网页从别的域名要数据。 我们都知道浏览器安全最基本的就是“同源策略”  同源策略是指URL的三个要素:  协议相同 域名相同 端口相同  它会限制三种行为:  Cookie、LocalStorage">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
   
@@ -24,10 +24,12 @@
     <link rel="icon" href="/favicon.png">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 
-</head>
+<meta name="generator" content="Hexo 4.2.1"></head>
 <body>
   <div id="container">
     <div id="wrap">
@@ -106,9 +108,9 @@
 <p>同源策略的目的是为了保证用户信息的安全。因此是必要的。<br>但是有时候对开发来讲也会不方便，尤其是 ajax 请求。</p>
 <p>因些就是有 jsonp 的方案。</p>
 <p>从上面的限制列表中可以看到，浏览器的同源策略限制了 Cookie, DOM, Ajax, 但是是没有HTML的一些标签，比如:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span><span class="undefined"></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">""</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>比如 A 站点的地址是 <a href="http://example1.com/page/test.html" target="_blank" rel="noopener">http://example1.com/page/test.html</a>, 页面上的 script 是</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://example2.com/test.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://example2.com/test.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>是可以请求到数据，浏览器并不做限制。这样就可以执行 example2.com 上的js文件了。</p>
 <p>但是我们有时候需要一种理自由的处理example2.com 上的数据，就需要在 example2.com 上写一些接口，比如：<br><a href="http://example2.com/test.php" target="_blank" rel="noopener">http://example2.com/test.php</a><br>比如这个接口返回json: {“result”: “This is test”}.<br>但是 script 标签对于返回的 json 并没有什么用。而且script 的返回是由js解析器直接执行了。<br>因此，我们可以直接 js 函数，或者 js 函数的调用，比如：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process(&#123;<span class="string">"result"</span>: <span class="string">"This is test"</span>&#125;);</span><br></pre></td></tr></table></figure>
@@ -117,10 +119,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="ck49rsi0q000cyj4ir9z5neek" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2018/06/30/jsonp/" data-id="ckb2fhqnw0004c94iac3hfjnk" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -158,7 +160,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP-Python/">PHP,Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -167,7 +169,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/PHP-Python/" style="font-size: 10px;">PHP,Python</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Shell/" style="font-size: 20px;">Shell</a> <a href="/tags/vim/" style="font-size: 20px;">vim</a>
+      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/PHP/" style="font-size: 15px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Shell/" style="font-size: 15px;">Shell</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 15px;">vim</a>
     </div>
   </div>
 
@@ -176,7 +178,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -188,6 +190,14 @@
       <ul>
         
           <li>
+            <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/">怎样在Ubuntu下设置交换内存</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/05/what-is-the-difference-between-process-and-thread/">Linux下的进程和线程有什么区别?</a>
+          </li>
+        
+          <li>
             <a href="/2019/12/17/how-to-cat-mutiplelines-to-file/">命令行中向一个文件插入多行</a>
           </li>
         
@@ -197,14 +207,6 @@
         
           <li>
             <a href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/">Linux free命令中的buffer和cache有什么区别?</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/02/remove-bom/">怎么删除文件开头的UTF8 BOM</a>
-          </li>
-        
-          <li>
-            <a href="/2019/05/26/c-macro-do-while/">C语言宏定义中为什么使用do while(0)</a>
           </li>
         
       </ul>
@@ -219,7 +221,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 fantasyczl<br>
+      &copy; 2020 fantasyczl<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -237,11 +239,17 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

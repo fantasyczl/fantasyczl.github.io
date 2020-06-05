@@ -3,14 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2019/5 | fantasyczl</title>
+  <title>Linux下的进程和线程有什么区别? | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="fantasyczl">
-<meta property="og:url" content="http://fantasyczl.com/archives/2019/05/index.html">
+  <meta name="description" content="概念进程和线程有什么不同? 或者说有什么区别?我们都知道: 进程是操作系统管理资源的最小单位, 线程是系统高度的基本单位. 那么具体到Linux系统, 进程和线程有什么区别呢? 首先, 在Linux Kernel看来, 其实是没有线程的. 所有的用户线程在在内核看来都是进程, 不过是轻量级的进程(Light Weight Process). 跟普通的进程有点区别. 区别在于:轻量级进程之间共享同样">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下的进程和线程有什么区别?">
+<meta property="og:url" content="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/index.html">
 <meta property="og:site_name" content="fantasyczl">
+<meta property="og:description" content="概念进程和线程有什么不同? 或者说有什么区别?我们都知道: 进程是操作系统管理资源的最小单位, 线程是系统高度的基本单位. 那么具体到Linux系统, 进程和线程有什么区别呢? 首先, 在Linux Kernel看来, 其实是没有线程的. 所有的用户线程在在内核看来都是进程, 不过是轻量级的进程(Light Weight Process). 跟普通的进程有点区别. 区别在于:轻量级进程之间共享同样">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-05T11:08:12.000Z">
+<meta property="article:modified_time" content="2020-06-05T12:38:28.210Z">
 <meta property="article:author" content="fantasyczl">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Process">
+<meta property="article:tag" content="Thread">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
@@ -63,39 +70,83 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/05/26/c-macro-do-while/" class="archive-article-date">
-  <time datetime="2019-05-26T08:35:11.000Z" itemprop="datePublished">5月 26</time>
+        <section id="main"><article id="post-what-is-the-difference-between-process-and-thread" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/05/what-is-the-difference-between-process-and-thread/" class="article-date">
+  <time datetime="2020-06-05T11:08:12.000Z" itemprop="datePublished">2020-06-05</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/26/c-macro-do-while/">C语言宏定义中为什么使用do while(0)</a>
+    <h1 class="article-title" itemprop="name">
+      Linux下的进程和线程有什么区别?
     </h1>
   
 
-    </header>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>进程和线程有什么不同? 或者说有什么区别?<br>我们都知道: 进程是操作系统管理资源的最小单位, 线程是系统高度的基本单位.</p>
+<p>那么具体到Linux系统, 进程和线程有什么区别呢?</p>
+<p>首先, 在Linux Kernel看来, 其实是没有线程的. 所有的用户线程在在内核看来都是进程, 不过是轻量级的进程(Light Weight Process). 跟普通的进程有点区别. 区别在于:<br>轻量级进程之间共享同样的地址空间以及打开的文件等资源. 相比普通进程更轻量一些.</p>
+<blockquote>
+<p>So, effectively we can say that threads and light weight processes are same.<br>It’s just that thread is a term that is used at user level while light weight process is a term used at kernel level.</p>
+</blockquote>
+<p>实际上, 我们可以说线程和轻量级进程是一样的. 只是线程是一个用户级的术语, 而轻量级进程是一个内核级的术语.</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>从实现的角度来看, 线程使用 pthread 库来创建. 它内部, 使用了 clone() 的系统调用来创建轻量级进程, 像创建普通进程一样. 这意味着创建一个普通进程的 fork() 函数, 后面也会调用 clone(), 根据创建线程或轻量级进程, 使用不同的参数.</p>
+<p>所以进程和线程的主要不同, 就是调用 clone() 的传参不同.</p>
+<p>系统调用 clone() 克隆一个任务, 带有一个可配置的共享级别, 它们是:</p>
+<ol>
+<li>CLONE_FILES: 共享同样的文件描述符表(而不是创建一个新的)</li>
+<li>CLONE_PARENT: 不在新任务和旧任务之间创建父子关系. 否则的话, 子进程的 getppid() = 父进程的 getpid()</li>
+<li>CLONE_VM: 共享同样的内存空间, 而不是复制一份.</li>
+</ol>
+<p>fork() 调用 clone(), 最少的共享.<br>pthread_create() 调用 clone(), 最多的共享.</p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
+<li><a href="https://www.thegeekstuff.com/2013/11/linux-process-and-threads/" target="_blank" rel="noopener">https://www.thegeekstuff.com/2013/11/linux-process-and-threads/</a></li>
+<li><a href="https://stackoverflow.com/a/809049/2550332" target="_blank" rel="noopener">https://stackoverflow.com/a/809049/2550332</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/" data-id="ckb2fhqo5000fc94i1qfmgm5d" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Process/" rel="tag">Process</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Thread/" rel="tag">Thread</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          怎样在Ubuntu下设置交换内存
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/12/17/how-to-cat-mutiplelines-to-file/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">命令行中向一个文件插入多行</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
 </section>
         
           <aside id="sidebar">
