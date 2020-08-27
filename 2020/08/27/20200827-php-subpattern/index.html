@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>C语言宏定义中为什么使用do while(0) | fantasyczl</title>
+  <title>PHP 中多个 Subpattern 匹配问题 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
+  <meta name="description" content="今天无意中看到多个小括号嵌套的正则表达式. 突然就想, 那么匹配出来后的排序是怎么样的? 于是决定看一下文档.文档地址: https:&#x2F;&#x2F;www.php.net&#x2F;manual&#x2F;en&#x2F;regexp.reference.subpatterns.php 什么是子模式 (Subpattern)子模式通过小括号来界定. 它有两个作用:  局部化一组可替代方案. 例如: (sun|mon)day, 既匹配 s">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C语言宏定义中为什么使用do while(0)">
-<meta property="og:url" content="http://fantasyczl.com/2019/05/26/c-macro-do-while/index.html">
+<meta property="og:title" content="PHP 中多个 Subpattern 匹配问题">
+<meta property="og:url" content="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
+<meta property="og:description" content="今天无意中看到多个小括号嵌套的正则表达式. 突然就想, 那么匹配出来后的排序是怎么样的? 于是决定看一下文档.文档地址: https:&#x2F;&#x2F;www.php.net&#x2F;manual&#x2F;en&#x2F;regexp.reference.subpatterns.php 什么是子模式 (Subpattern)子模式通过小括号来界定. 它有两个作用:  局部化一组可替代方案. 例如: (sun|mon)day, 既匹配 s">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-05-26T08:35:11.000Z">
-<meta property="article:modified_time" content="2019-05-26T08:49:41.000Z">
+<meta property="article:published_time" content="2020-08-27T09:42:37.000Z">
+<meta property="article:modified_time" content="2020-08-27T11:38:38.709Z">
 <meta property="article:author" content="fantasyczl">
-<meta property="article:tag" content="C">
+<meta property="article:tag" content="PHP">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
@@ -68,10 +68,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-c-macro-do-while" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-20200827-php-subpattern" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2019/05/26/c-macro-do-while/" class="article-date">
-  <time datetime="2019-05-26T08:35:11.000Z" itemprop="datePublished">2019-05-26</time>
+    <a href="/2020/08/27/20200827-php-subpattern/" class="article-date">
+  <time datetime="2020-08-27T09:42:37.000Z" itemprop="datePublished">2020-08-27</time>
 </a>
     
   </div>
@@ -82,7 +82,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      C语言宏定义中为什么使用do while(0)
+      PHP 中多个 Subpattern 匹配问题
     </h1>
   
 
@@ -90,22 +90,29 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.<br>我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次.</p>
-<p>这是为什么呢?</p>
-<p>我们来看一个例子:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TEST(a, b)  a++; b++;</span></span><br></pre></td></tr></table></figure><br>这是个宏声明.</p>
-<p>如果这个宏使用以下场景中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>这种情况下, 编译器会报错. 因为宏替换后, if () 后只包含 a++; 而 b_++; 会被编译器认为是 if 之外的语句.</p>
-<p>这种情况也可以在 if 后问题带上 {} 来解决. 但是这不能从程序上完全保证.</p>
-<p>那另外的解决方案是宏定义可以使用 {} . 但是这会引用另一个问题.<br>我们写程序, 不管是正常语句还是宏调用. 都习惯在最后写一个分号.<br>那如果宏后面有分号, 宏替换后, 会变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>宏替换后变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">&#123; a++; b++; &#125;;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
-<p>同样会编译不通过. 宏最后的分号会被认识是一个空语句, 而且是在 if () 包含之外.</p>
-<p>如果换成 do {} while(0) 呢?<br>我们看一下<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    <span class="keyword">do</span> &#123; &#125; <span class="keyword">while</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>这样就没有问题, 编译会通完, 而且也没有歧义. 所以这是业界最佳实践.</p>
+        <p>今天无意中看到多个小括号嵌套的正则表达式. 突然就想, 那么匹配出来后的排序是怎么样的? 于是决定看一下文档.<br>文档地址: <a href="https://www.php.net/manual/en/regexp.reference.subpatterns.php" target="_blank" rel="noopener">https://www.php.net/manual/en/regexp.reference.subpatterns.php</a></p>
+<h2 id="什么是子模式-Subpattern"><a href="#什么是子模式-Subpattern" class="headerlink" title="什么是子模式 (Subpattern)"></a>什么是子模式 (Subpattern)</h2><p>子模式通过小括号来界定. 它有两个作用:</p>
+<ol>
+<li>局部化一组可替代方案. 例如: (sun|mon)day, 既匹配 sunday, 也匹配 monday. 如果不用小括号的写法是 sunday|monday.</li>
+<li>它建立一组可捕捉的子模式. 当整个模式匹配时, 匹配子模式的字符串通过参数传回给调用者(像 preg_match 中的 match参数). match 是个数组. 它从左到右按开括号的顺序数, (从1开始) 去获取捕捉字符串的数量.</li>
+</ol>
+<p>例如:<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">字符串 <span class="string">"the red king"</span> 匹配模式 ((<span class="built_in">red</span>|<span class="type">white</span>)(king|<span class="type">queen</span>)). </span><br><span class="line">捕捉子字符串就是 <span class="string">"red king"</span>, <span class="string">"red"</span>, <span class="string">"king"</span>. 下标分别是 <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<p>再来看一个例子:<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">模式是 /((Sat)ur|(Sun))day/</span><br><span class="line">匹配字符串 Saturday 的结果是, 捕捉子字符串分别是 <span class="number">1</span> =&gt; Satur, <span class="number">2</span> =&gt; Sat</span><br><span class="line">匹配字符串 Sunday 的结果是, 捕捉子字符串分别是 <span class="number">1</span> =&gt; Sun, <span class="number">2</span> =&gt; <span class="string">''</span>, <span class="number">3</span> =&gt; Sun</span><br></pre></td></tr></table></figure></p>
+<p>仔细想想为什么?</p>
+<h2 id="数量限制"><a href="#数量限制" class="headerlink" title="数量限制"></a>数量限制</h2><p>捕捉子字符串最多 65535 个. 不过一般不会到这个上限. 应该能满足大多数的需要.</p>
+<h2 id="如何关闭捕捉子模式"><a href="#如何关闭捕捉子模式" class="headerlink" title="如何关闭捕捉子模式?"></a>如何关闭捕捉子模式?</h2><p>有的时候, 我们可能只想使用它的多组替代方案的功能(上面第1点), 而不想使用它的捕捉功能(上面第2点). 那该怎么做呢?<br>如果在左小括号后, 紧跟 “?:” 字符, 那么子模式不再时行捕捉, 并且在计算子模式的捕捉子序列时也不再计数.</p>
+<p>例如:<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">((?:<span class="built_in">red</span>|<span class="type">white</span>)(king|<span class="type">queen</span>)) 匹配字符串 white queen 时,</span><br><span class="line">子模式匹配的子序列分别是: white queen, queen, 下标分别为<span class="number">1</span>,<span class="number">2</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="可互相替代的组号"><a href="#可互相替代的组号" class="headerlink" title="可互相替代的组号"></a>可互相替代的组号</h2><p>有时候需要有多个匹配的子模式, 但是他们的子组号可互相替代, 就是子组号要一样.<br>正常情况下, 每个子模式都会有一个后向引用的组号, 即使它们当中只有一个子模式会被匹配到.<br>解决这个问题, 需要 “?|”, 它允许产生重复的组号</p>
+<p>比如:<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(?:(Sat)ur|<span class="type">(Sun</span>))day 匹配 Sunday, 子模式的匹配序列为: <span class="number">1</span> =&gt; '', <span class="number">2</span> =&gt; Sun</span><br></pre></td></tr></table></figure><br>这里 Sun 的序号是2, 即使1是空的.<br>使用 ?| 后:<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(?|<span class="type">(Sat</span>)ur|<span class="type">(Sun</span>))day 匹配 Sunday, 子模式的匹配序列为: <span class="number">1</span> =&gt; Sun</span><br><span class="line">(?|<span class="type">(Sat</span>)ur|<span class="type">(Sun</span>))day 匹配 Saturday, 子模式的匹配序列为: <span class="number">1</span> =&gt; Sat</span><br></pre></td></tr></table></figure></p>
+<p>使用 ?| , Sat 和 Sun 的后向引用都是 1.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/05/26/c-macro-do-while/" data-id="ckecqi66d0005sa4i4bl54g3g" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/" data-id="ckecqi66b0002sa4i30yy9v2t" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
 
     </footer>
   </div>
@@ -113,19 +120,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2019/07/02/remove-bom/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          怎么删除文件开头的UTF8 BOM
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/06/30/jsonp/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/07/24/20200724-tcp-keepalive/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">JSONP的理解</div>
+      <div class="article-nav-title">Linux下如何设置 TCP KeepAlive</div>
     </a>
   
 </nav>

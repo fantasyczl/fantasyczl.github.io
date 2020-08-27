@@ -3,19 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>C语言宏定义中为什么使用do while(0) | fantasyczl</title>
+  <title>Archives: 2020/8 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
-<meta property="og:type" content="article">
-<meta property="og:title" content="C语言宏定义中为什么使用do while(0)">
-<meta property="og:url" content="http://fantasyczl.com/2019/05/26/c-macro-do-while/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="fantasyczl">
+<meta property="og:url" content="http://fantasyczl.com/archives/2020/08/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次. 这">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-05-26T08:35:11.000Z">
-<meta property="article:modified_time" content="2019-05-26T08:49:41.000Z">
 <meta property="article:author" content="fantasyczl">
-<meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
@@ -68,71 +63,39 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-c-macro-do-while" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/05/26/c-macro-do-while/" class="article-date">
-  <time datetime="2019-05-26T08:35:11.000Z" itemprop="datePublished">2019-05-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      C语言宏定义中为什么使用do while(0)
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/08/27/20200827-php-subpattern/" class="archive-article-date">
+  <time datetime="2020-08-27T09:42:37.000Z" itemprop="datePublished">8月 27</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/08/27/20200827-php-subpattern/">PHP 中多个 Subpattern 匹配问题</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>C语言的多行宏定义, 很多都使用 do {} while(0) 的形式. 比如 PHP 源码中就有很多这样的定义.<br>我们知道 do {} while 是循环结构, 在C语言中, 这种形式, 会先执行 do {} 中的语句, 再执行 while 中的判断条件. 也就是无论 while 中的条件是什么,  do {} 中语句至少会执行一次. 而且 while(0), 所以 do {} 就只执行一次.</p>
-<p>这是为什么呢?</p>
-<p>我们来看一个例子:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TEST(a, b)  a++; b++;</span></span><br></pre></td></tr></table></figure><br>这是个宏声明.</p>
-<p>如果这个宏使用以下场景中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>这种情况下, 编译器会报错. 因为宏替换后, if () 后只包含 a++; 而 b_++; 会被编译器认为是 if 之外的语句.</p>
-<p>这种情况也可以在 if 后问题带上 {} 来解决. 但是这不能从程序上完全保证.</p>
-<p>那另外的解决方案是宏定义可以使用 {} . 但是这会引用另一个问题.<br>我们写程序, 不管是正常语句还是宏调用. 都习惯在最后写一个分号.<br>那如果宏后面有分号, 宏替换后, 会变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    TEST(a, b);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>宏替换后变成:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">&#123; a++; b++; &#125;;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
-<p>同样会编译不通过. 宏最后的分号会被认识是一个空语句, 而且是在 if () 包含之外.</p>
-<p>如果换成 do {} while(0) 呢?<br>我们看一下<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">    <span class="keyword">do</span> &#123; &#125; <span class="keyword">while</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure><br>这样就没有问题, 编译会通完, 而且也没有歧义. 所以这是业界最佳实践.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/05/26/c-macro-do-while/" data-id="ckecqi66d0005sa4i4bl54g3g" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2019/07/02/remove-bom/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          怎么删除文件开头的UTF8 BOM
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2018/06/30/jsonp/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">JSONP的理解</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
+  
+  
+    </div></section>
+  
 </section>
         
           <aside id="sidebar">
