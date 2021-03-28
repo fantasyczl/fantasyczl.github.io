@@ -65,6 +65,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-20210328-golang-cpu-too-high" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/28/20210328-golang-cpu-too-high/" class="article-date">
+  <time datetime="2021-03-28T06:42:46.000Z" itemprop="datePublished">2021-03-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/28/20210328-golang-cpu-too-high/">一个Go服务占用CPU太高的优化过程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近上线一个Go服务, 在高峰期总是会报CPU超70%的报警.<br>然后就打开 pprof 开始追踪, 发现近 50% 的CPU被 runtime.gcDrain 及相关的 gc 函数占用了.</p>
+<p>这说明 gc 很活跃.</p>
+<p>这时候也不知道从哪里入手. 大概只有两个方向, 看一下 heap 的情况:</p>
+<ol>
+<li>看看哪里占的内存总多</li>
+<li>看看哪里分配的对象最多</li>
+</ol>
+<p>最后定位到解码的函数, json 和 mapstructure.<br>仔细看了之后, 发现这里有很多直接传值的地方, 而不是传指针. 修改后, 再压测: 有改善, 但不明显.</p>
+<p>这个时候就没有什么思路了.</p>
+<p>经同事提醒. 再优化 elasticsearch 取数据的地方, 只取需要的 fields. 再压测, 发现有小幅提升. 但仍不明显.<br>跟同事讨论的时候, 我发现问题并不是CPU占用太高了, 而是CPU占用很高, 内存占用很少, 很不均衡. CPU占用70%, 内存不超过5%.</p>
+<p>那搜索一下, 发现 Go 提供了一个 GOGC 的变量, 可以设置触发 GC 的值. 运行时也可以通过 <code>runtime/debug 包的 func SetGCPercent(percent int) int</code> 来修改.<br>默认是100, 那先修改成 500 看一下. 发现效果明显. CPU 降低了 50%.</p>
+<p>问题解决了!!! 优化了一个星期, 改了很多代码. 最后是一行代码解决了!!!</p>
+<p>不过目前看来 500 也有点低, 下次再调一下找一个更合理的值.</p>
+<p>所以这个问题的原因是: 我们这个服务不是个CPU密集型的应用, 但是CPU占用过高, 而内存占用很低. (嗯, 只能说 Go 的 GC 很给力).<br>那这种情况下, 应该先看看, 是否可以降低触发 Gc 的阈值看一下, 也许就是你要的.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2021/03/28/20210328-golang-cpu-too-high/" data-id="ckmsud1qh0003kh4i78uxb1zz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-20210218-golang-optimization" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/02/18/20210218-golang-optimization/" class="article-date">
@@ -112,7 +164,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2021/02/18/20210218-golang-optimization/" data-id="cklalavk20002544i6mvibhnw" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2021/02/18/20210218-golang-optimization/" data-id="ckmsud1r1000kkh4iff5q9cmo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
@@ -165,7 +217,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/" data-id="cklalavk10001544i0df4bgxr" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/" data-id="ckmsud1q70000kh4i679t07ba" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
@@ -237,7 +289,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/07/24/20200724-tcp-keepalive/" data-id="cklalavk20003544i4b0w5uxx" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/07/24/20200724-tcp-keepalive/" data-id="ckmsud1qg0002kh4icakubvou" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP/" rel="tag">TCP</a></li></ul>
@@ -283,7 +335,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="cklalavjw0000544ihcjm8atd" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="ckmsud1qe0001kh4i736ue7fa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
@@ -353,7 +405,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/05/how-to-make-swap-mem-in-ubuntu/" data-id="cklalavk70009544iegioc2nx" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/05/how-to-make-swap-mem-in-ubuntu/" data-id="ckmsud1qt000akh4idowe1yjn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
@@ -411,7 +463,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/" data-id="cklalavkd000i544i0clifxdo" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/" data-id="ckmsud1r0000jkh4ida5j92hz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Process/" rel="tag">Process</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Thread/" rel="tag">Thread</a></li></ul>
@@ -451,7 +503,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/12/17/how-to-cat-mutiplelines-to-file/" data-id="cklalavkc000g544iea1a9054" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/12/17/how-to-cat-mutiplelines-to-file/" data-id="ckmsud1qw000dkh4i3d7g03nd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
@@ -493,7 +545,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="cklalavk9000d544i1f88765a" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ckmsud1qv000ckh4ib5yhfrva" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
@@ -540,7 +592,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="cklalavk7000a544i4z7696y2" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="ckmsud1qr0009kh4i7s66cr3q" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
@@ -552,50 +604,9 @@
 
 
   
-    <article id="post-remove-bom" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/07/02/remove-bom/" class="article-date">
-  <time datetime="2019-07-02T05:31:41.000Z" itemprop="datePublished">2019-07-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/02/remove-bom/">怎么删除文件开头的UTF8 BOM</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Bom 是指文件开头的三个连续字节. 0xEF 0xBB 0xBF.<br>所以我们只要匹配并处理字就可以了. </p>
-<h2 id="PHP代码如下"><a href="#PHP代码如下" class="headerlink" title="PHP代码如下"></a>PHP代码如下</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$bom = pack(<span class="string">'H*'</span>,<span class="string">'EFBBBF'</span>);</span><br><span class="line">$text = preg_replace(<span class="string">"/^$bom/"</span>, <span class="string">''</span>, $text);</span><br></pre></td></tr></table></figure>
-<h2 id="Python代码如下"><a href="#Python代码如下" class="headerlink" title="Python代码如下:"></a>Python代码如下:</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> codes</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> line[:<span class="number">3</span>] == codecs.BOM_UTF8:</span><br><span class="line">    print(<span class="string">'BOM'</span>)</span><br><span class="line">    line = line[<span class="number">3</span>:]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/07/02/remove-bom/" data-id="cklalavk9000c544ih3gre2c9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 </section>
@@ -608,7 +619,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -617,7 +628,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 10px;">Go</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
+      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 13.33px;">Go</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
     </div>
   </div>
 
@@ -626,7 +637,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -636,6 +647,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/03/28/20210328-golang-cpu-too-high/">一个Go服务占用CPU太高的优化过程</a>
+          </li>
         
           <li>
             <a href="/2021/02/18/20210218-golang-optimization/">Go 优化Tips</a>
@@ -651,10 +666,6 @@
         
           <li>
             <a href="/2020/06/06/20200606-git-rebase-merge-difference/">Git rebase 与 merge 的区别</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/">怎样在Ubuntu下设置交换内存</a>
           </li>
         
       </ul>

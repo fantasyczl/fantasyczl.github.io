@@ -3,19 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Git rebase 与 merge 的区别 | fantasyczl</title>
+  <title>fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好. 功能区别背景比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让ma">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Git rebase 与 merge 的区别">
-<meta property="og:url" content="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="fantasyczl">
+<meta property="og:url" content="http://fantasyczl.com/page/3/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好. 功能区别背景比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让ma">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-05T16:41:04.000Z">
-<meta property="article:modified_time" content="2020-06-05T16:51:44.044Z">
 <meta property="article:author" content="fantasyczl">
-<meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
@@ -68,10 +63,12 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-20200606-git-rebase-merge-difference" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+  
+    <article id="post-the-first-post" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/06/06/20200606-git-rebase-merge-difference/" class="article-date">
-  <time datetime="2020-06-05T16:41:04.000Z" itemprop="datePublished">2020-06-06</time>
+    <a href="/2015/08/30/the-first-post/" class="article-date">
+  <time datetime="2015-08-30T05:45:42.000Z" itemprop="datePublished">2015-08-30</time>
 </a>
     
   </div>
@@ -81,8 +78,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      Git rebase 与 merge 的区别
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/30/the-first-post/">GitHub Blog启程了</a>
     </h1>
   
 
@@ -90,49 +87,37 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好.</p>
-<h3 id="功能区别"><a href="#功能区别" class="headerlink" title="功能区别"></a>功能区别</h3><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.<br>这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让master的新提交在feature也出现.<br>有两个方法, 一是git rebase, 二是git merge.</p>
-<ol>
-<li>git merge. 会把 master 的内容和feature的内容合并, 并产生一个新的 commit.</li>
-<li>git rebase. 会把当前feautre 分支到master的根commit到最新的commit都修改一遍. 使feature与master的分叉commit 建立在 master 的最新commit 之后. 这样产生的历史是线性的.</li>
-</ol>
-<h4 id="git-rebase-的注意事项"><a href="#git-rebase-的注意事项" class="headerlink" title="git rebase 的注意事项"></a>git rebase 的注意事项</h4><p>git rebase 应该永远使用在私有分支上. 因为它会修改 commit, 如果是公开的分支, 会影响别人.</p>
-<p>上面没有图, 只有文字说明, 比较抽象. 具体详细的说明参见: <a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing" target="_blank" rel="noopener">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a></p>
+        <p>好久没有写博客了，原因是自己太懒，没有总结落实成文字的习惯。以前一直用的csdn，写过一些文章，也转过一些文章，后来由于懒，就没再更新。现在决定要开始写些东西了，就索性转到github上来好了，也学一些Markdown！</p>
+<p>下面记一下博客搭建过程：</p>
+<h3 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h3><p>用GitHub很久了，找些开源库，写些小项目什么的，工作中也一直用git来做版本管理，因此这些先略过不表</p>
+<h3 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h3><p>Hexo是一个快速、简洁且高效的博客框架。支持Markdown解析文章，因此就选了Hexo</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>这之前需要先安装Node.js</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">npm install hexo --save</span><br></pre></td></tr></table></figure>
+<h4 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h4><p>安装好后，进入博客根目录，执行以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
+<h4 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试"></a>本地调试</h4><p>执行以下命令，成功后按说明在浏览器中打开<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h4 id="Hexo简写命令"><a href="#Hexo简写命令" class="headerlink" title="Hexo简写命令"></a>Hexo简写命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
+<h4 id="本地设置"><a href="#本地设置" class="headerlink" title="本地设置"></a>本地设置</h4><p>打开_config.yml，设置发布方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    <span class="built_in">type</span>: git</span><br></pre></td></tr></table></figure></p>
+<h3 id="在GitHub创建一个项目xxx-github-io"><a href="#在GitHub创建一个项目xxx-github-io" class="headerlink" title="在GitHub创建一个项目xxx.github.io"></a>在GitHub创建一个项目xxx.github.io</h3><p>用git clone 到本地</p>
+<h3 id="部署静态网页"><a href="#部署静态网页" class="headerlink" title="部署静态网页"></a>部署静态网页</h3><p>到本地的xxx.github.io的根目录下，执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="ckmsud1qe0001kh4i736ue7fa" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2015/08/30/the-first-post/" data-id="ckmsud1qy000gkh4i0j4ffgnu" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
-
     </footer>
   </div>
   
-    
-<nav id="article-nav">
-  
-    <a href="/2020/07/24/20200724-tcp-keepalive/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Linux下如何设置 TCP KeepAlive
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">怎样在Ubuntu下设置交换内存</div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    </nav>
+  
 </section>
         
           <aside id="sidebar">

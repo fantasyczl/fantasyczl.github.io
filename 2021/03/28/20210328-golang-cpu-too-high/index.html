@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Git rebase 与 merge 的区别 | fantasyczl</title>
+  <title>一个Go服务占用CPU太高的优化过程 | fantasyczl</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好. 功能区别背景比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让ma">
+  <meta name="description" content="最近上线一个Go服务, 在高峰期总是会报CPU超70%的报警.然后就打开 pprof 开始追踪, 发现近 50% 的CPU被 runtime.gcDrain 及相关的 gc 函数占用了. 这说明 gc 很活跃. 这时候也不知道从哪里入手. 大概只有两个方向, 看一下 heap 的情况:  看看哪里占的内存总多 看看哪里分配的对象最多  最后定位到解码的函数, json 和 mapstructure">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git rebase 与 merge 的区别">
-<meta property="og:url" content="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/index.html">
+<meta property="og:title" content="一个Go服务占用CPU太高的优化过程">
+<meta property="og:url" content="http://fantasyczl.com/2021/03/28/20210328-golang-cpu-too-high/index.html">
 <meta property="og:site_name" content="fantasyczl">
-<meta property="og:description" content="今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好. 功能区别背景比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让ma">
+<meta property="og:description" content="最近上线一个Go服务, 在高峰期总是会报CPU超70%的报警.然后就打开 pprof 开始追踪, 发现近 50% 的CPU被 runtime.gcDrain 及相关的 gc 函数占用了. 这说明 gc 很活跃. 这时候也不知道从哪里入手. 大概只有两个方向, 看一下 heap 的情况:  看看哪里占的内存总多 看看哪里分配的对象最多  最后定位到解码的函数, json 和 mapstructure">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-05T16:41:04.000Z">
-<meta property="article:modified_time" content="2020-06-05T16:51:44.044Z">
+<meta property="article:published_time" content="2021-03-28T06:42:46.000Z">
+<meta property="article:modified_time" content="2021-03-28T07:28:43.923Z">
 <meta property="article:author" content="fantasyczl">
-<meta property="article:tag" content="Git">
+<meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="fantasyczl" type="application/atom+xml">
@@ -68,10 +68,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-20200606-git-rebase-merge-difference" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-20210328-golang-cpu-too-high" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/06/06/20200606-git-rebase-merge-difference/" class="article-date">
-  <time datetime="2020-06-05T16:41:04.000Z" itemprop="datePublished">2020-06-06</time>
+    <a href="/2021/03/28/20210328-golang-cpu-too-high/" class="article-date">
+  <time datetime="2021-03-28T06:42:46.000Z" itemprop="datePublished">2021-03-28</time>
 </a>
     
   </div>
@@ -82,7 +82,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Git rebase 与 merge 的区别
+      一个Go服务占用CPU太高的优化过程
     </h1>
   
 
@@ -90,22 +90,28 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>今天看到一篇文章, 讲到了 git rebase 与 git merge 的区别. 我觉得讲的非常好.</p>
-<h3 id="功能区别"><a href="#功能区别" class="headerlink" title="功能区别"></a>功能区别</h3><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>比如一个git项目有两个分支, master 和 feature. 当前在feature 开发. 那 feature 是从 master fork 出来的.<br>这个时候, 别人也在向 master 合并代码. 那么现在 master 和 feature 已经分叉了. 这时, 如果想让master的新提交在feature也出现.<br>有两个方法, 一是git rebase, 二是git merge.</p>
+        <p>最近上线一个Go服务, 在高峰期总是会报CPU超70%的报警.<br>然后就打开 pprof 开始追踪, 发现近 50% 的CPU被 runtime.gcDrain 及相关的 gc 函数占用了.</p>
+<p>这说明 gc 很活跃.</p>
+<p>这时候也不知道从哪里入手. 大概只有两个方向, 看一下 heap 的情况:</p>
 <ol>
-<li>git merge. 会把 master 的内容和feature的内容合并, 并产生一个新的 commit.</li>
-<li>git rebase. 会把当前feautre 分支到master的根commit到最新的commit都修改一遍. 使feature与master的分叉commit 建立在 master 的最新commit 之后. 这样产生的历史是线性的.</li>
+<li>看看哪里占的内存总多</li>
+<li>看看哪里分配的对象最多</li>
 </ol>
-<h4 id="git-rebase-的注意事项"><a href="#git-rebase-的注意事项" class="headerlink" title="git rebase 的注意事项"></a>git rebase 的注意事项</h4><p>git rebase 应该永远使用在私有分支上. 因为它会修改 commit, 如果是公开的分支, 会影响别人.</p>
-<p>上面没有图, 只有文字说明, 比较抽象. 具体详细的说明参见: <a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing" target="_blank" rel="noopener">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a></p>
+<p>最后定位到解码的函数, json 和 mapstructure.<br>仔细看了之后, 发现这里有很多直接传值的地方, 而不是传指针. 修改后, 再压测: 有改善, 但不明显.</p>
+<p>这个时候就没有什么思路了.</p>
+<p>经同事提醒. 再优化 elasticsearch 取数据的地方, 只取需要的 fields. 再压测, 发现有小幅提升. 但仍不明显.<br>跟同事讨论的时候, 我发现问题并不是CPU占用太高了, 而是CPU占用很高, 内存占用很少, 很不均衡. CPU占用70%, 内存不超过5%.</p>
+<p>那搜索一下, 发现 Go 提供了一个 GOGC 的变量, 可以设置触发 GC 的值. 运行时也可以通过 <code>runtime/debug 包的 func SetGCPercent(percent int) int</code> 来修改.<br>默认是100, 那先修改成 500 看一下. 发现效果明显. CPU 降低了 50%.</p>
+<p>问题解决了!!! 优化了一个星期, 改了很多代码. 最后是一行代码解决了!!!</p>
+<p>不过目前看来 500 也有点低, 下次再调一下找一个更合理的值.</p>
+<p>所以这个问题的原因是: 我们这个服务不是个CPU密集型的应用, 但是CPU占用过高, 而内存占用很低. (嗯, 只能说 Go 的 GC 很给力).<br>那这种情况下, 应该先看看, 是否可以降低触发 Gc 的阈值看一下, 也许就是你要的.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="ckmsud1qe0001kh4i736ue7fa" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2021/03/28/20210328-golang-cpu-too-high/" data-id="ckmsud1qh0003kh4i78uxb1zz" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
 
     </footer>
   </div>
@@ -113,19 +119,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2020/07/24/20200724-tcp-keepalive/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Linux下如何设置 TCP KeepAlive
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/06/05/how-to-make-swap-mem-in-ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/02/18/20210218-golang-optimization/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">怎样在Ubuntu下设置交换内存</div>
+      <div class="article-nav-title">Go 优化Tips</div>
     </a>
   
 </nav>
