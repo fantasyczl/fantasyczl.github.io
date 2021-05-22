@@ -65,6 +65,64 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-20210522-http-code-502-vs-504" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/05/22/20210522-http-code-502-vs-504/" class="article-date">
+  <time datetime="2021-05-22T04:05:54.000Z" itemprop="datePublished">2021-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/22/20210522-http-code-502-vs-504/">HTTP 状态码 502 与 504 的区别</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>线上偶尔会有502或者504的报错. 我们访问网页的时候也经常会有. 那么它们到底有什么区别呢?<br>今天就查了一些资料, 来学习一下.</p>
+<h2 id="先来看释义"><a href="#先来看释义" class="headerlink" title="先来看释义:"></a>先来看释义:</h2><ul>
+<li>502: Bad Gateway. 表示web server 做为了一个gateway 或者 proxy 的时候, 从上游接受到了无效的 response.</li>
+<li>504: Gateway Timeout. 表示web server 做为一个gateway 或者 proxy 的时候, 无法即时的从上游得到一个response, 来完成请求.</li>
+</ul>
+<p>看起来好像差不多. 但在实际开发中, 凭经验, 好像502, 504都是因为超时.</p>
+<h2 id="LNMP-下来看一下502-504"><a href="#LNMP-下来看一下502-504" class="headerlink" title="LNMP 下来看一下502, 504"></a>LNMP 下来看一下502, 504</h2><p>下面结合 LNMP 的情形下来来看一下.</p>
+<h2 id="Nginx-产生-502-的原因"><a href="#Nginx-产生-502-的原因" class="headerlink" title="Nginx 产生 502 的原因"></a>Nginx 产生 502 的原因</h2><ul>
+<li>PHP-FPM 没有运行</li>
+<li>Nginx 无法连接 PHP-FPM</li>
+</ul>
+<h3 id="PHP-FPM-没有启动"><a href="#PHP-FPM-没有启动" class="headerlink" title="PHP-FPM 没有启动"></a>PHP-FPM 没有启动</h3><p>如果因为这些原因, Nginx 无法连上 PHP-FPM, 那么将会导致 502. access.log 中:<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0.0.1</span> - - <span class="string">[22/May/2021:17:36:19 +0800]</span> <span class="string">"<span class="keyword">GET</span> / HTTP/1.1"</span> <span class="number">502</span> <span class="number">158</span> <span class="string">"-"</span> <span class="string">"curl/7.76.1"</span> <span class="string">"-"</span></span><br></pre></td></tr></table></figure><br>这时候 error.log 中为:<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connect() <span class="keyword">to</span> unix:/<span class="built_in">run</span>/php/php7<span class="number">.2</span>-fpm.sock failed (<span class="number">2</span>: No such <span class="built_in">file</span> <span class="keyword">or</span> directory) <span class="keyword">while</span> connecting <span class="keyword">to</span> upstream</span><br></pre></td></tr></table></figure><br>这可能是因为没有启动 PHP-FPM, 启动就好了.</p>
+<h3 id="PHP-FPM-处理超时"><a href="#PHP-FPM-处理超时" class="headerlink" title="PHP-FPM 处理超时"></a>PHP-FPM 处理超时</h3><p>如果你的应用反应时间太长, 将会产生一个超时的错误. 如果 PHP-FPM 的超时设置比 Nginx 的超时设置小. Nginx 将会返回 502.<br>这是因为 PHP-FPM 关闭了连接.</p>
+<p>error.log 将会显示:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recv() failed (104:<span class="built_in"> Connection </span>reset by peer) <span class="keyword">while</span> reading response header <span class="keyword">from</span> upstream</span><br></pre></td></tr></table></figure></p>
+<p>这个时候, 如果有 php-fpm 日志, 将会显示:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ARNING: [pool mypool] child 2120,<span class="built_in"> script </span><span class="string">'/var/www/html/index.php'</span> (request: <span class="string">"GET /index.php"</span>) execution timed out (25.755070 sec), terminating</span><br></pre></td></tr></table></figure></p>
+<h3 id="PHP-FPM-没有超时-Nginx-超时"><a href="#PHP-FPM-没有超时-Nginx-超时" class="headerlink" title="PHP-FPM 没有超时, Nginx 超时"></a>PHP-FPM 没有超时, Nginx 超时</h3><p>如果这个时候你调高了 php-fpm 的超时时间, 这将引发另一个问题, nginx 可能会没有接收到 PHP-FPM 的响应而超时, 这个时候 Nginx 会返回 504.</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>(502)[<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502]" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502]</a></li>
+<li>(504)[<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504]" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504]</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2021/05/22/20210522-http-code-502-vs-504/" data-id="ckozl5ein0006rm4icmu331f7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-20210328-golang-cpu-too-high" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/03/28/20210328-golang-cpu-too-high/" class="article-date">
@@ -105,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2021/03/28/20210328-golang-cpu-too-high/" data-id="ckmsvw67q0004624ig13s9qqu" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2021/03/28/20210328-golang-cpu-too-high/" data-id="ckozl5eil0004rm4i840cdskk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
@@ -164,7 +222,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2021/02/18/20210218-golang-optimization/" data-id="ckmsvw67q0003624i5i0z3irv" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2021/02/18/20210218-golang-optimization/" data-id="ckozl5eil0003rm4i7tce2g9q" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
@@ -217,7 +275,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/" data-id="ckmsvw67p0002624i6p42efpt" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/08/27/20200827-php-subpattern/" data-id="ckozl5eik0002rm4ie65y8e9a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
@@ -289,7 +347,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/07/24/20200724-tcp-keepalive/" data-id="ckmsvw67o0001624ih2057k1u" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/07/24/20200724-tcp-keepalive/" data-id="ckozl5eij0001rm4ieuxu90us" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP/" rel="tag">TCP</a></li></ul>
@@ -335,7 +393,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="ckmsvw67j0000624i38dg94u5" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/06/20200606-git-rebase-merge-difference/" data-id="ckozl5eid0000rm4i7rs63qao" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
@@ -405,7 +463,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/05/how-to-make-swap-mem-in-ubuntu/" data-id="ckmsvw67w000c624i4ro25izp" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/05/how-to-make-swap-mem-in-ubuntu/" data-id="ckozl5eis000drm4iaf3tai82" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
@@ -463,7 +521,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/" data-id="ckmsvw681000k624i9cpt9xm8" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2020/06/05/what-is-the-difference-between-process-and-thread/" data-id="ckozl5eiy000lrm4icfat2tso" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Process/" rel="tag">Process</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Thread/" rel="tag">Thread</a></li></ul>
@@ -503,7 +561,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/12/17/how-to-cat-mutiplelines-to-file/" data-id="ckmsvw67v000b624ihs6z3tw7" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/12/17/how-to-cat-mutiplelines-to-file/" data-id="ckozl5eir000crm4i3se274oq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
@@ -545,57 +603,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ckmsvw67y000f624ie6om3jzo" class="article-share-link">Share</a>
+      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ckozl5eiv000grm4i0hzp7b88" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-diffrence-between-buffer-and-cache-in-free" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/" class="article-date">
-  <time datetime="2019-08-25T02:29:35.000Z" itemprop="datePublished">2019-08-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/25/diffrence-between-buffer-and-cache-in-free/">Linux free命令中的buffer和cache有什么区别?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在Linux的free命令输出中, 有一个buffer 和 cache 字段. 如下图:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              <span class="string">total</span>        <span class="string">used</span>        <span class="string">free</span>      <span class="string">shared</span>  <span class="string">buff/cache</span>   <span class="string">available</span></span><br><span class="line"><span class="attr">Mem:</span>        <span class="number">1009028</span>      <span class="number">318676</span>      <span class="number">114392</span>       <span class="number">21640</span>      <span class="number">575960</span>      <span class="number">488928</span></span><br><span class="line"><span class="attr">Swap:</span>             <span class="number">0</span>           <span class="number">0</span>           <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
-<p>它们代表什么意思呢?</p>
-<p>查资料后发现:</p>
-<ul>
-<li>buffer 是某一个程序临时存数据的地方, 并且这些数据不能被别的程序使用. 举个带宽的例子:当你要立即发送大量数据的时候,但是网卡发送能力较低. 它会将这些数据保存在buffer里, 然后慢慢发送这些数据.</li>
-<li>cache 是为了快速访问而将频繁用到的数据临时保存在内存里</li>
-</ul>
-<p>另一个不同是cache将会多次使用, 而buffer只会使用一次.</p>
-<p>但是他们都是为了处理数据而临时存储.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/08/25/diffrence-between-buffer-and-cache-in-free/" data-id="ckmsvw67t0008624i8ibw0eeg" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -619,7 +630,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -628,7 +639,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 13.33px;">Go</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
+      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 13.33px;">Go</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/Nginx/" style="font-size: 10px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
     </div>
   </div>
 
@@ -637,7 +648,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -647,6 +658,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/05/22/20210522-http-code-502-vs-504/">HTTP 状态码 502 与 504 的区别</a>
+          </li>
         
           <li>
             <a href="/2021/03/28/20210328-golang-cpu-too-high/">一个Go服务占用CPU太高的优化过程</a>
@@ -662,10 +677,6 @@
         
           <li>
             <a href="/2020/07/24/20200724-tcp-keepalive/">Linux下如何设置 TCP KeepAlive</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/06/20200606-git-rebase-merge-difference/">Git rebase 与 merge 的区别</a>
           </li>
         
       </ul>
