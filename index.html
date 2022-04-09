@@ -65,6 +65,122 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-20220405-go-generic-proposal" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/04/05/20220405-go-generic-proposal/" class="article-date">
+  <time datetime="2022-04-05T10:06:04.000Z" itemprop="datePublished">2022-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/04/05/20220405-go-generic-proposal/">Golang 泛型提案学习</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>Go 1.18 支持泛型了。现在抽空就看了一下泛型提案。<a href="https://go.googlesource.com/proposal/+/refs/heads/master/design/43651-type-parameters.md" target="_blank" rel="noopener">英文地址</a><br>简单翻译如下：</p>
+</blockquote>
+<h1 id="翻译名词对照"><a href="#翻译名词对照" class="headerlink" title="翻译名词对照"></a>翻译名词对照</h1><ul>
+<li>type =&gt; 类型</li>
+<li>constrain =&gt; 结束</li>
+<li>interface =&gt; interface</li>
+</ul>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>我们建议扩展Go语言，对类型和函数声明添加可选的类型参数。类型参数被 interface 类型约束。当 interface 类型被用作类型限制的时候，可以支持添加额外的元素，用来限制满足 interface 的类型的集合。参数化的类型和函数可能会使用参数的操作，但这种情况只有在所有满足参数约束的类型都允许才行。类型 interface 通过一个统一的算法进行类型推断，以允许在函数调用的时候去掉类型参数。这个设计对 Go1 完全后向兼容。</p>
+<h1 id="怎么读这个提案"><a href="#怎么读这个提案" class="headerlink" title="怎么读这个提案"></a>怎么读这个提案</h1><p>这个文章非常长，这是如何阅读的指导：</p>
+<ul>
+<li>我们从一个高级的概述开始，非常简单的描述概念</li>
+<li>然后我们从零开始解释全部的设计，介绍详情，并有简单的例子</li>
+<li>在设计全部描述完之后，我们讨论实现，一些设计的问题，然后跟其它的泛型方法比较。</li>
+<li>然后我用几个完整的例子，以展示这个实现在实践中是如何使用的。</li>
+<li>例子之后，在附录中谈论了一些小的细节。</li>
+</ul>
+<h1 id="高级别的概述"><a href="#高级别的概述" class="headerlink" title="高级别的概述"></a>高级别的概述</h1><p>这部分非常简要的描述了这个设计建议的修改。这部分是为那些已经熟悉一个语言中, 泛型如何工作的人准备的。这些概念在后面的章节中会有详细的解释。</p>
+<ul>
+<li>函数可以有一个使用方括号的额外的类型参数列表，但是其它方面像一个普通的参数列表。<code>func F[T any](p T) {...}</code></li>
+<li>这些类型参数可以被普通参数使用，也可以在函数体内使用。</li>
+<li>类型也可以有类型参数列表：<code>type M[T any] []T</code>.</li>
+<li>每个类型参数都有一个类型约束，就像每个普通参数都有一个类型一样：<code>func F[T Constraint](p T) {...}</code></li>
+<li>类型约束是 interface 类型。</li>
+<li>新的预定义的约束 <code>any</code> 是一个允许所有类型的类型约束。</li>
+<li>当 interface 类型作为类型约束的时候，可以另外嵌入元素以限制满足约束的类型集合：<ul>
+<li>一个任意的类型 <code>T</code> 限制只能用那个类型。</li>
+<li>近似元素 <code>~T</code> 限制只能使用那些底层类型是 T 的类型。</li>
+<li>联合元素 <code>T1 | T2 | ...</code> 限制只能使用列出来的类型。</li>
+</ul>
+</li>
+<li>泛型函数使用的操作，必须被所有符合约束的类型都支持。</li>
+<li>使用泛型函数或类型，必须传一个类型参数。</li>
+<li>在常见情况下，类型推断允许去掉一个函数的类型参数。</li>
+</ul>
+<p>在接下来的部分中，我们将会对这些语言的修改详细的过一遍，你可能更想跳过开头，到例子部分，看一下实践中的泛型代码是怎么写的。</p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>在 Go 中，已经有很多要求支持泛型的请求的了。在 issue traker 上也有大量的讨论。</p>
+<p>这个设计建议，通过添加一种参数多态的形式，对 Go 语言进行扩展，这里的类型参数不是被声明的子类型关系限制的（就像别的面向对象语言一样），而是被明确定义的结构化约束限制。</p>
+<p>这个版本的设计跟2019年7月31号的设计草稿有很多相似的地方，不过 contracts 已经去掉了，替换成了 interface 类型，并且语法也有改变。</p>
+<p>针对增加类型参数，已经有几个提案了，可以通过以前的链接找到。这里呈现的很多想法之前也出现过。这里描述的主要新特性是语法和 interface 类型作为约束的仔细检查。</p>
+<p>这个设计不支持模板元编程或其它任何形式的编译时编程。</p>
+<p>因为术语 <code>generic</code> 在 Go 社区广泛使用，我们下面将使用它来代表一个带着类型参数的函数或类型。不要将本设计中使用的术语 generic 跟其它语言像 C++, C#, Java 或 Rust 中使用的同样的术语搞混淆。它们有相似的地方但是不一样。</p>
+<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>我们将分阶段基于例子来描述完整的设计。</p>
+<h2 id="类型参数"><a href="#类型参数" class="headerlink" title="类型参数"></a>类型参数</h2><p>泛型代码是使用抽象的数据类型来写的，这种抽象数据类型，我们称作<strong>类型参数</strong>。当运行泛型代码的时候，类型参数将被实际参数替换。</p>
+<p>这是一个函数，它输出 slice 中的每个元素，这里 slice 中元素的类型 <code>T</code> 是未知的。这是为了支持泛型编程我们想要允许的函数中，一个微不足道的例子。（稍后我们将讨论泛型类型）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Print 输出 slice 中的元素。</span></span><br><span class="line"><span class="comment">// 它可能被传入任何类型的 slice.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Print</span><span class="params">(s []T)</span></span> &#123;  <span class="comment">// 只是一个例子，不是建议的语法</span></span><br><span class="line">    <span class="keyword">for</span> _, v := <span class="keyword">range</span> s &#123;</span><br><span class="line">        fmt.Println(v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个方法中，第一个需要做的决定是：类型参数 T 怎么被声明？在像 Go 这样的语言中，我们希望每一个标识符都以某种方式被声明。</p>
+<p>这里我做一个设计决定：类型参数跟普通的非类型函数参数相似，并且跟其它参数一起列出来。然而，类型参数跟非类型参数不一样，所以虽然它们都出现在参数列表中，但是我们想要区分它们。这会导致我们下一个设计决定：我们定义一个另外的可选的参数列表来描述类型参数。</p>
+<p>类型参数列表出现在普通参数前面。为了区分类型参数列表和普通参数列表，类型参数列表使用方括号而不是小圆括号。就像普通参数拥有类型，类型参数也有元类型，就是约束。我们稍后将讨论约束的细节。现在我们只需要知道 <code>any</code> 是一个有效的约束，意思是任意类型都可以。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Print 输出任意 slice 的元素。</span></span><br><span class="line"><span class="comment">// Print 有一个类型参数 T 和一个单个的普通参数 s, 它是一个 slice, slice的元素类型是 T</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Print</span>[<span class="title">T</span> <span class="title">any</span>]<span class="params">(s []T)</span></span> &#123;</span><br><span class="line">    <span class="comment">// same as above</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是说在 Print 函数中，标识符 T 是一个类型参数，这个类型现在还不知道，但是当函数被调用时就知道了。<code>any</code>的意思是<code>T</code>可以是任何类型。就像上面看到的，当描述普通的非类型参数时，类型参数可以被当作类型使用。在函数体中，它也可以当作类型使用。</p>
+<p>跟普通参数列表不一样的是，在类型参数列表中名字是必须的。这可以避免语法歧义，并且没有任何理由去省略类型参数的名字。</p>
+<p>由于 Print 有一个类型参数，所有对 Print 的调用必须提供一个类型参数。稍后我们将看到这个类型参数怎么通过非类型参数推断出来。现在我们将明确的传入类型参数。类型参数被传入，就相当于类型参数被声明了：作为一个分享的参数列表。当有类型参数列表时，使用方括号。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 []int 调用 Print.</span></span><br><span class="line"><span class="comment">// Print 有一个类型参数 T，并且我们想传入 []int，</span></span><br><span class="line"><span class="comment">// 所以我们传一个 int 类型参数，这么写 Print[int].</span></span><br><span class="line"><span class="comment">// Print[int] 函数期望参数是 []int</span></span><br><span class="line">Print[<span class="keyword">int</span>]([]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这将会输出</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><p>让我们的例子稍微复杂点。比如有一个函数，它将为了把一个任意类型的 slice 转换成 []string, 将通过调用每个元素的 String 方法来实现。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个方法是非法的。只是演示</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Stringify</span>[<span class="title">T</span> <span class="title">any</span>]<span class="params">(s []T)</span> <span class="params">(ret []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, v := <span class="keyword">range</span> s &#123;</span><br><span class="line">        ret = <span class="built_in">append</span>(ret, v.String())   <span class="comment">// 非法</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一眼看上去好像可以，不过这个例子中 v 的类型是 T, 而 T 可以是任何类型。这意味着 T 不需要有 String 方法。所以 v.String() 的调用是非法的。</p>
+<p>当然了，同样的问题在其它支持泛型的语言中也存在。例如在 C++ 中，一个泛型函数（用C++的术语，一个函数模板）可以调用一个泛型类型的值的任意方法。就是在 C++ 中，调用 v.String() 是可以的。如果函数调用使用了一个类型参数，它没有 String 方法，编译的时候会报错。这些报错可能很长，比如在报错发生前有好几层的泛型函数调用时，为了明白哪里出错了，所有这些都需要报出来。</p>
+<p>C++ 的方案对 Go 来说是个糟糕的选择。一个原因是语言的风格。在 Go 中我们不引用名字，比如，在这个例子中，String, 并且希望它们存在。当它们被看见的时候，Go 解析所有的名字到它们声明的地方。</p>
+<p>另一个原因是 Go 被设计用来支持大规模编程的。我们必须考虑这个例子中泛型函数的定义（上面的 Stringify）以及对泛型函数的调用（没有显示，不过可能在其它包中）相距甚远的情况。一般来讲，所有的泛型代码期望类型参数符合某种确定的要求。我们当这种要求称作<strong>约束</strong>（其它语言有类似的概念，比如类型限制或trait限制或概念）。在这个情况，约束非常明显：类型必须有 <code>String() string</code> 方法。在别的情况中，可能没有那么明显。</p>
+<p>我们不想从 Stringify 发生的地方衍生约束（在这个情况中，调用 String 方法的地方）。如果我们做了，对 Stringify 的一个小的改动可能会改变约束。那就意味着一个的改动可能影响很远的代码，调用这个函数的代码意外退出。对 Stringify 故意改变它的约束，并强制调用方改变是没有问题的。我们想要避免的是 Stringify 意外的改变了它的约束。</p>
+<p>这意味着约束必须同时在调用者传入的类型参数和泛型函数中的代码中设置限制。调用者只能传满足约束的类型参数。泛型函数只能以约束允许的方式使用这些值。我们相信任何尝试在 Go 中定义泛型编程，这都是一条重要的规则：泛型代码只能使用它的类型参数知道实现了的操作。</p>
+<h2 id="任意类型允许的操作"><a href="#任意类型允许的操作" class="headerlink" title="任意类型允许的操作"></a>任意类型允许的操作</h2><p>在我们讨论约束之前，我们简单的记住 <code>any</code> 约束是什么。如果一个泛型函数使用 <code>any</code> 约束，就像上面的 Print 函数一样，任意类型都允许。泛型函数中类型参数的值可以使用的操作就是那些被任意类型都允许的操作。在上面的例子中，Print 函数声明了一个变量 v 它的类型是 T，并且它把这个变量传给函数。</p>
+<p>任意类型允许的操作是：</p>
+<ul>
+<li>声明这些类型的变量</li>
+<li>把同类型的其它值你分配给这些值</li>
+<li>把这些变量传给函数或者在函数返回它们</li>
+<li>取这些变量的地址</li>
+<li>转换或者分配这些类型的值给 interface{}</li>
+<li>转换 T 类型的值到类型 T （允许但是没有用）</li>
+<li>使用类型断言把一个 interace 类型的值转到这些类型</li>
+<li>用在 type switch 中的 case</li>
+<li>定义和使用这些类型的组合类型，比如这些类型的 slice</li>
+<li>把这些类型传一些预定义的函数，比如 <code>new</code></li>
+</ul>
+<p>可能随着未来语言变化，可能增加其它的操作，但这不是现在可以预料的。</p>
+<h3 id="定义约束"><a href="#定义约束" class="headerlink" title="定义约束"></a>定义约束</h3><p>（未完，待续…）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://fantasyczl.com/2022/04/05/20220405-go-generic-proposal/" data-id="cl1lz7yno0000174i8xve9fza" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-20210522-http-code-502-vs-504" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/05/22/20210522-http-code-502-vs-504/" class="article-date">
@@ -497,7 +613,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>进程和线程有什么不同? 或者说有什么区别?<br>我们都知道: 进程是操作系统管理资源的最小单位, 线程是系统高度的基本单位.</p>
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>进程和线程有什么不同? 或者说有什么区别?<br>我们都知道: 进程是操作系统管理资源的最小单位, 线程是系统调度的基本单位.</p>
 <p>那么具体到Linux系统, 进程和线程有什么区别呢?</p>
 <p>首先, 在Linux Kernel看来, 其实是没有线程的. 所有的用户线程在在内核看来都是进程, 不过是轻量级的进程(Light Weight Process). 跟普通的进程有点区别. 区别在于:<br>轻量级进程之间共享同样的地址空间以及打开的文件等资源. 相比普通进程更轻量一些.</p>
 <blockquote>
@@ -573,48 +689,6 @@
 
 
   
-    <article id="post-shell-oop" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/09/22/shell-oop/" class="article-date">
-  <time datetime="2019-09-22T09:31:13.000Z" itemprop="datePublished">2019-09-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/22/shell-oop/">shell实现面向对象编程</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天看到一篇博客, 有人实现了 shell 的面向对象功能. 虽然class new 等是用函数实现的, 但是思想非常巧妙, 很有意思, 所以就把它贴在这里, 记录一下.<br>而且看起来还不是很容易弄明白, 可以打开 set -x 配合源码一起看.</p>
-<p>其中使用到了 uuidgen, 依赖于系统中的 uuid-runtime. 如果没有安装, 请安装对应的库, ubuntu中的命令是:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install uuid-runtime</span><br></pre></td></tr></table></figure></p>
-<p>原文地址: <a href="https://coolshell.cn/articles/5035.html" target="_blank" rel="noopener">https://coolshell.cn/articles/5035.html</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> OO support <span class="built_in">functions</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">set</span> -x</span></span><br><span class="line"></span><br><span class="line">DEFCLASS=""</span><br><span class="line">CLASS=""</span><br><span class="line">THIS=0</span><br><span class="line"></span><br><span class="line">class() &#123;</span><br><span class="line">    DEFCLASS="$1"</span><br><span class="line">    eval CLASS_$&#123;DEFCLASS&#125;_VARS=""</span><br><span class="line">    eval CLASS_$&#123;DEFCLASS&#125;_FUNCTIONS=""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static() &#123;</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func() &#123;</span><br><span class="line">    local varname="CLASS_$&#123;DEFCLASS&#125;_FUNCTIONS"</span><br><span class="line">    eval "$varname=\"\$&#123;$varname&#125;$1 \""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var() &#123;</span><br><span class="line">    local varname="CLASS_$&#123;DEFCLASS&#125;_VARS"</span><br><span class="line">    eval $varname="\"\$&#123;$varname&#125;$1 \""</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadvar() &#123;</span><br><span class="line">    eval "varlist=\"\$CLASS_$&#123;CLASS&#125;_VARS\""</span><br><span class="line">    for var in $varlist; do</span><br><span class="line">        eval "$var=\"\$INSTANCE_$&#123;THIS&#125;_$var\""</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadfunc() &#123;</span><br><span class="line">    eval "funclist=\"\$CLASS_$&#123;CLASS&#125;_FUNCTIONS\""</span><br><span class="line">    for func in $funclist; do</span><br><span class="line">        eval "$&#123;func&#125;() &#123; $&#123;CLASS&#125;::$&#123;func&#125; \"\$@\"; return \$?; &#125;"</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">savevar() &#123;</span><br><span class="line">    eval "varlist=\"\$CLASS_$&#123;CLASS&#125;_VARS\""</span><br><span class="line">    for var in $varlist; do</span><br><span class="line">        eval "INSTANCE_$&#123;THIS&#125;_$var=\"\$$var\""</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">typeof() &#123;</span><br><span class="line">    eval echo \$TYPEOF_$1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">new() &#123;</span><br><span class="line">    local class="$1"</span><br><span class="line">    local cvar="$2"</span><br><span class="line">    shift</span><br><span class="line">    shift</span><br><span class="line">    local id=$(uuidgen | tr A-F a-f | sed -e "s/-//g")</span><br><span class="line">    eval TYPEOF_$&#123;id&#125;=$class</span><br><span class="line">    eval $cvar=$id</span><br><span class="line">    local funclist</span><br><span class="line">    eval "funclist=\"\$CLASS_$&#123;class&#125;_FUNCTIONS\""</span><br><span class="line">    for func in $funclist; do</span><br><span class="line">        eval "$&#123;cvar&#125;.$&#123;func&#125;() &#123;</span><br><span class="line">            local t=\$THIS; THIS=$id; local c=\$CLASS; CLASS=$class; loadvar;</span><br><span class="line">            loadfunc; $&#123;class&#125;::$&#123;func&#125; \"\$@\"; rt=\$?; savevar; CLASS=\$c;</span><br><span class="line">            THIS=\$t; return $rt;</span><br><span class="line">        &#125;"</span><br><span class="line">    done</span><br><span class="line">    eval "$&#123;cvar&#125;.$&#123;class&#125; \"\$@\" || true"</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------------------------</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Example code</span></span><br><span class="line"><span class="meta">#</span><span class="bash">---------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> class definition</span></span><br><span class="line">class Storpel</span><br><span class="line">    func Storpel</span><br><span class="line">    func setName</span><br><span class="line">    func setQuality</span><br><span class="line">    func print</span><br><span class="line">    var name</span><br><span class="line">    var quality</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> class implementation</span></span><br><span class="line">Storpel::Storpel() &#123;</span><br><span class="line">    setName "$1"</span><br><span class="line">    setQuality "$2"</span><br><span class="line">    if [ -z "$name" ]; then setName "Generic"; fi</span><br><span class="line">    if [ -z "$quality" ]; then setQuality "Normal"; fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Storpel::setName() &#123; name="$1"; &#125;</span><br><span class="line">Storpel::setQuality() &#123; quality="$1"; &#125;</span><br><span class="line">Storpel::print() &#123; echo "$name ($quality)"; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">new Storpel one "Storpilator 1000" Medium</span><br><span class="line">new Storpel two</span><br><span class="line">new Storpel three</span><br><span class="line"><span class="meta">#</span></span><br><span class="line">two.setName "Storpilator 2000"</span><br><span class="line">two.setQuality "Strong"</span><br><span class="line"></span><br><span class="line">one.print</span><br><span class="line">two.print</span><br><span class="line">three.print</span><br><span class="line"></span><br><span class="line">echo ""</span><br><span class="line">echo "one: $one ($(typeof $one))"</span><br><span class="line">echo "two: $two ($(typeof $two))"</span><br><span class="line">echo "Three: $three ($(typeof $three))"</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://fantasyczl.com/2019/09/22/shell-oop/" data-id="ckozl5eiv000grm4i0hzp7b88" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -630,7 +704,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NetWork/" rel="tag">NetWork</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Process/" rel="tag">Process</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/" rel="tag">Thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -639,7 +713,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 13.33px;">Go</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/Nginx/" style="font-size: 10px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
+      <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Go/" style="font-size: 13.33px;">Go</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/NetWork/" style="font-size: 10px;">NetWork</a> <a href="/tags/Nginx/" style="font-size: 10px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 16.67px;">PHP</a> <a href="/tags/Process/" style="font-size: 10px;">Process</a> <a href="/tags/Python/" style="font-size: 13.33px;">Python</a> <a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/Thread/" style="font-size: 10px;">Thread</a> <a href="/tags/vim/" style="font-size: 13.33px;">vim</a>
     </div>
   </div>
 
@@ -648,7 +722,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -658,6 +732,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/04/05/20220405-go-generic-proposal/">Golang 泛型提案学习</a>
+          </li>
         
           <li>
             <a href="/2021/05/22/20210522-http-code-502-vs-504/">HTTP 状态码 502 与 504 的区别</a>
@@ -675,10 +753,6 @@
             <a href="/2020/08/27/20200827-php-subpattern/">PHP 中多个 Subpattern 匹配问题</a>
           </li>
         
-          <li>
-            <a href="/2020/07/24/20200724-tcp-keepalive/">Linux下如何设置 TCP KeepAlive</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -691,7 +765,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 fantasyczl<br>
+      &copy; 2022 fantasyczl<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
